@@ -1,10 +1,11 @@
-
 import streamlit as st
 import streamlit.components.v1 as components
 import requests
 import re
 import html
 import ipaddress
+import json
+
 try:
     import pyttsx3
 except ImportError:
@@ -260,28 +261,23 @@ def analisar_golpe(texto):
 
     regras = [
         (
-            ["pix", "transferência", "transferencia", "depósito",
-             "deposito"],
+            ["pix", "transferência", "transferencia", "depósito", "deposito"],
             "Menção a Pix, depósito ou transferência."
         ),
         (
-            ["senha", "token", "código de segurança",
-             "codigo de seguranca", "código de acesso"],
+            ["senha", "token", "código de segurança", "codigo de seguranca", "código de acesso"],
             "Menção a senha ou código de segurança."
         ),
         (
-            ["prêmio", "premio", "ganhou", "sorteio",
-             "dinheiro grátis", "dinheiro gratis"],
+            ["prêmio", "premio", "ganhou", "sorteio", "dinheiro grátis", "dinheiro gratis"],
             "Possível promessa de prêmio ou dinheiro."
         ),
         (
-            ["urgente", "imediatamente", "última chance",
-             "ultima chance", "agora mesmo"],
+            ["urgente", "imediatamente", "última chance", "ultima chance", "agora mesmo"],
             "Pressão para agir rapidamente."
         ),
         (
-            ["conta bloqueada", "cartão bloqueado",
-             "cartao bloqueado", "conta suspensa"],
+            ["conta bloqueada", "cartão bloqueado", "cartao bloqueado", "conta suspensa"],
             "Possível ameaça de bloqueio de conta ou cartão."
         ),
         (
@@ -289,13 +285,11 @@ def analisar_golpe(texto):
             "Pedido para clicar em link ou confirmar dados."
         ),
         (
-            ["taxa para liberar", "pague a taxa",
-             "taxa antecipada", "taxa de liberação"],
+            ["taxa para liberar", "pague a taxa", "taxa antecipada", "taxa de liberação"],
             "Possível cobrança antecipada."
         ),
         (
-            ["cpf", "dados bancários", "dados bancarios",
-             "número do cartão", "numero do cartao"],
+            ["cpf", "dados bancários", "dados bancarios", "número do cartão", "numero do cartao"],
             "Menção a dados pessoais ou bancários."
         ),
         (
@@ -321,6 +315,7 @@ def analisar_golpe(texto):
 
     return sinais
 
+
 # =====================================
 # PROTEÇÃO DE CRIANÇAS E ADOLESCENTES
 # =====================================
@@ -332,59 +327,43 @@ def analisar_sinais_protecao(texto):
     regras_protecao = [
         (
             [
-                "não conte para seus pais",
-                "nao conte para seus pais",
-                "mantenha em segredo",
-                "isso fica entre nós",
-                "isso fica entre nos"
+                "não conte para seus pais", "nao conte para seus pais",
+                "mantenha em segredo", "isso fica entre nós", "isso fica entre nos"
             ],
             "Possível tentativa de impor segredo a uma criança."
         ),
         (
             [
-                "mande uma foto íntima",
-                "mande uma foto intima",
-                "envie fotos sem roupa",
-                "foto sem roupa",
-                "mostre seu corpo"
+                "mande uma foto íntima", "mande uma foto intima",
+                "envie fotos sem roupa", "foto sem roupa", "mostre seu corpo"
             ],
             "Possível solicitação de imagem íntima."
         ),
         (
             [
-                "encontro escondido",
-                "não avise seus pais",
-                "nao avise seus pais",
-                "venha sozinho",
-                "venha sozinha"
+                "encontro escondido", "não avise seus pais", "nao avise seus pais",
+                "venha sozinho", "venha sozinha"
             ],
             "Possível tentativa de marcar encontro escondido."
         ),
         (
             [
-                "vou te dar presentes",
-                "te dou dinheiro se",
-                "em troca de fotos",
-                "comprei créditos para você",
-                "comprei creditos para voce"
+                "vou te dar presentes", "te dou dinheiro se", "em troca de fotos",
+                "comprei créditos para você", "comprei creditos para voce"
             ],
             "Possível oferta de dinheiro ou presentes em contexto suspeito."
         ),
         (
             [
-                "apague nossa conversa",
-                "apaga as mensagens",
-                "não mostre esta conversa",
-                "nao mostre esta conversa"
+                "apague nossa conversa", "apaga as mensagens",
+                "não mostre esta conversa", "nao mostre esta conversa"
             ],
             "Possível tentativa de ocultar a conversa."
         ),
         (
             [
-                "sou adulto, mas",
-                "qual sua idade",
-                "quantos anos você tem",
-                "quantos anos voce tem"
+                "sou adulto, mas", "qual sua idade",
+                "quantos anos você tem", "quantos anos voce tem"
             ],
             "Pergunta sobre idade ou diferença de idade: avaliar o contexto."
         )
@@ -618,7 +597,7 @@ if enviar:
         )
         resposta_completa += (
             "\n\n---\n\n"
-            "### 🛡️ Proteção de crianças e adolescentes\n\n"
+            + "### 🛡️ Proteção de crianças e adolescentes\n\n"
             + nivel_protecao
         )
 
@@ -653,7 +632,7 @@ if st.session_state.ultima_resposta:
     st.markdown("---")
     st.markdown("### 🔊 Voz e última resposta")
 
-    if st.button("🔊 Ler última resposta"):
+    if st.button("🔊 Ler última resposta (Pyttsx3)"):
         sucesso, erro_voz = ler_resposta(
             st.session_state.ultima_resposta
         )
@@ -715,3 +694,42 @@ st.caption(
     "IA ALFA ANTIGOLPES • Ferramenta de apoio à prevenção. "
     "Resultados podem estar incompletos; confirme em fontes oficiais."
 )
+
+
+# =====================================
+# VOZ NO NAVEGADOR
+# =====================================
+
+if st.session_state.get("ultima_resposta"):
+    texto_voz = json.dumps(
+        st.session_state.ultima_resposta,
+        ensure_ascii=False
+    )
+
+    components.html(
+        f"""
+        <button id="falar" style="
+            width: 100%;
+            min-height: 45px;
+            background: linear-gradient(90deg, #087bff, #00b9ff);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: sans-serif;
+        ">🔊 Ouvir resposta da IA Alfa (Navegador)</button>
+        <script>
+        const texto = {texto_voz};
+
+        document.getElementById("falar").onclick = function() {{
+            const voz = new SpeechSynthesisUtterance(texto);
+            voz.lang = "pt-BR";
+            voz.rate = 0.95;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(voz);
+        }};
+        </script>
+        """,
+        height=60
+    )
