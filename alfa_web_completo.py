@@ -6,30 +6,74 @@ st.set_page_config(
     layout="wide"
 )
 
+# Estilo Futurista de Alta Definição
 st.markdown('''
 <style>
     .stApp {
-        background-color: #0b132b;
+        background: radial-gradient(circle at top, #102747 0%, #07101e 70%);
         color: #ffffff;
     }
+    
+    /* Globo 3D Holográfico Centralizado */
+    .header-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+    .globo-original {
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(76,201,240,0.2) 0%, rgba(0,0,0,0) 70%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 25px #087bff;
+        margin-bottom: 15px;
+    }
+    .globo-svg {
+        width: 65px;
+        height: 65px;
+        filter: drop-shadow(0px 0px 10px #4cc9f0);
+    }
+    
     .main-title {
         text-align: center;
         color: #4cc9f0;
-        font-size: 2.3rem;
-        font-weight: 800;
-        margin-bottom: 0.1rem;
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin: 0;
+        text-shadow: 0 0 18px #087bff;
+        letter-spacing: 1.5px;
     }
     .sub-title {
         text-align: center;
-        color: #4895ef;
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
+        color: #a5d8ff;
+        font-size: 1.1rem;
+        margin-top: 5px;
+        margin-bottom: 2rem;
+        font-weight: 500;
     }
+
+    /* Estilo da caixa de texto e botões */
     .stTextArea textarea {
-        background-color: #1c2541;
+        background-color: #0b192d;
         color: #ffffff;
-        border: 1px solid #3a506b;
-        border-radius: 8px;
+        border: 1px solid #3677b8;
+        border-radius: 12px;
+        font-size: 16px;
+    }
+    .stButton button, .stFormSubmitButton button {
+        background: linear-gradient(90deg, #087bff, #00b9ff);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 17px;
+        padding: 12px;
     }
 </style>
 ''', unsafe_allow_html=True)
@@ -50,8 +94,20 @@ def analisar_golpe(texto):
             sinais.append(descricao)
     return sinais
 
-st.markdown('<h1 class="main-title">🌐 🛡️ 🎤 IA ALFA ANTIGOLPES</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-title">ASSISTENTE DE SEGURANÇA DIGITAL GLOBAL</p>', unsafe_allow_html=True)
+# Topo Original Centralizado com Globo Neon Holográfico
+st.markdown('''
+<div class="header-container">
+    <div class="globo-original">
+        <svg class="globo-svg" viewBox="0 0 24 24" fill="none" stroke="#4cc9f0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+    </div>
+    <h1 class="main-title">🛡️ IA ALFA ANTIGOLPES</h1>
+    <p class="sub-title">🌐 SISTEMA GLOBAL DE SEGURANÇA DIGITAL E VOZ INTELIGENTE 🎙️</p>
+</div>
+''', unsafe_allow_html=True)
 
 st.markdown("### 🔎 Analisar Mensagem Suspeita")
 
@@ -61,7 +117,7 @@ with st.form("formulario_analise"):
         placeholder="Exemplo: Seu banco bloqueou sua conta. Clique no link para recadastrar sua senha...",
         height=150
     )
-    enviar = st.form_submit_button("🛡️ ANALISAR E LER AGORA")
+    enviar = st.form_submit_button("🛡️ ANALISAR E OUVIR RESULTADO 🎙️")
 
 if enviar:
     if pergunta.strip():
@@ -74,24 +130,28 @@ if enviar:
         if sinais:
             st.error("⚠️ **ALERTA: SINAIS TÍPICOS DE GOLPE DETECTADOS!**")
             st.write("Identificamos os seguintes padrões suspeitos nesta mensagem:")
-            texto_resultado = "Atenção! Alerta de golpe detectado. Identificamos os seguintes padrões suspeitos nesta mensagem: "
+            texto_resultado = "Atenção! Alerta de golpe detectado. Identificamos os seguintes padrões suspeitos na mensagem: "
             for s in sinais:
                 st.markdown(f"- 🔴 **{s}**")
                 texto_resultado += f"{s}. "
             st.warning("👉 **Recomendação:** Não clique em links, não envie dinheiro por Pix e não forneça dados pessoais ou senhas.")
-            texto_resultado += "Recomendação: Não clique em links, não envie dinheiro por Pix e não forneça dados pessoais ou senhas."
+            texto_resultado += "Recomendação: Não clique em links, não envie dinheiro por Pix e não forneça dados pessoais."
         else:
             st.success("✅ **NENHUM SINAL DIRETO DE GOLPE IDENTIFICADO PELAS REGRAS PADRÃO.**")
-            st.info("💡 **Dica de segurança:** Mesmo que nada crítico tenha sido detectado, lembre-se de nunca compartilhar dados confidenciais se não tiver certeza da identidade de quem enviou a mensagem.")
-            texto_resultado = "Nenhum sinal direto de golpe foi identificado pelas regras padrão. Dica de segurança: Lembre-se de nunca compartilhar dados confidenciais."
+            st.info("💡 **Dica de segurança:** Mesmo que nada crítico tenha sido detectado, lembre-se de nunca compartilhar dados confidenciais se não tiver certeza da identidade do remetente.")
+            texto_resultado = "Nenhum sinal direto de golpe foi identificado. Lembre-se de nunca compartilhar dados confidenciais."
 
         texto_seguro = texto_resultado.replace('"', '\\"').replace("\n", " ")
         
+        # Painel de Áudio com Microfone Integrado
         audio_html = f"""
-        <div style="margin-top: 15px; padding: 10px; background-color: #1c2541; border-radius: 8px; border: 1px solid #4cc9f0;">
-            <p style="margin: 0 0 8px 0; color: #4cc9f0; font-weight: bold;">🎤 Leitura por Voz da IA ALFA:</p>
-            <button onclick="falarTexto()" style="background-color: #4cc9f0; color: #0b132b; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">
-                🔊 Ouvir Alerta Novamente
+        <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 12px; border: 1px solid #00b9ff; box-shadow: 0 0 15px rgba(0, 185, 255, 0.2);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                <span style="font-size: 24px;">🎙️</span>
+                <span style="color: #4cc9f0; font-weight: bold; font-size: 16px;">Sintetizador de Voz IA ALFA</span>
+            </div>
+            <button onclick="falarTexto()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+                🔊 Ouvir Relatório Novamente
             </button>
         </div>
         <script>
@@ -104,7 +164,7 @@ if enviar:
                     window.speechSynthesis.speak(msg);
                 }}
             }}
-            setTimeout(falarTexto, 500);
+            setTimeout(falarTexto, 600);
         </script>
         """
         st.markdown(audio_html, unsafe_allow_html=True)
