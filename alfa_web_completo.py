@@ -1,4 +1,5 @@
 ﻿import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="IA ALFA Mundo Digital",
@@ -6,15 +7,15 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilo para remover espacos no topo e ajustar Globo e Layout
+# Estilo para colar no topo e zerar qualquer espaco em branco
 st.markdown("""
 <style>
-    /* Remove todo o espaco e padding do topo */
+    /* Remove barra superior e espacos extras do Streamlit */
     header[data-testid="stHeader"] {
         display: none !important;
     }
     .main .block-container {
-        padding-top: 1rem !important;
+        padding-top: 0.5rem !important;
         padding-bottom: 2rem !important;
         max-width: 1100px;
     }
@@ -32,22 +33,22 @@ st.markdown("""
         margin-bottom: 1rem;
     }
     .globo-3d-gigante {
-        width: 140px;
-        height: 140px;
+        width: 130px;
+        height: 130px;
         border-radius: 50%;
         background: radial-gradient(circle at 35% 35%, #6bd5ff, #087bff 55%, #020713 100%);
         box-shadow: 0 0 50px #00b9ff, inset -15px -15px 30px rgba(0,0,0,0.8);
-        margin-bottom: 15px;
+        margin-bottom: 12px;
         animation: floatAndGlow 4s ease-in-out infinite alternate;
     }
     @keyframes floatAndGlow {
         0% { transform: translateY(0px) scale(1); box-shadow: 0 0 35px #087bff; }
-        100% { transform: translateY(-10px) scale(1.03); box-shadow: 0 0 60px #00b9ff; }
+        100% { transform: translateY(-8px) scale(1.03); box-shadow: 0 0 60px #00b9ff; }
     }
     .main-title {
         text-align: center;
         color: #6bd5ff;
-        font-size: 2.6rem;
+        font-size: 2.4rem;
         font-weight: 900;
         margin: 0;
         text-shadow: 0 0 25px #087bff;
@@ -56,9 +57,9 @@ st.markdown("""
     .sub-title {
         text-align: center;
         color: #a5d8ff;
-        font-size: 1.1rem;
-        margin-top: 6px;
-        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+        margin-top: 4px;
+        margin-bottom: 1.2rem;
         font-weight: 600;
     }
     .stTextArea textarea {
@@ -67,16 +68,6 @@ st.markdown("""
         border: 1px solid #3677b8;
         border-radius: 12px;
         font-size: 16px;
-    }
-    .stButton button {
-        background: linear-gradient(90deg, #087bff, #00b9ff);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-weight: bold;
-        font-size: 18px;
-        padding: 14px;
-        width: 100%;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -97,12 +88,12 @@ def analisar_golpe(texto):
             sinais.append(descricao)
     return sinais
 
-# Topo limpo colado no topo da pagina
+# Topo colado perfeitamente no topo
 st.markdown("""
 <div class="header-container">
     <div class="globo-3d-gigante"></div>
     <h1 class="main-title">🌐 IA ALFA MUNDO DIGITAL</h1>
-    <p class="sub-title">SISTEMA GLOBAL DE ANÁLISE E VOZ AUTOMÁTICA 🎙️ 🔊</p>
+    <p class="sub-title">SISTEMA GLOBAL DE ANÁLISE E VOZ INTELIGENTE 🎙️ 🔊</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -111,16 +102,17 @@ st.markdown("### 🔎 Analisar Mensagem Suspeita")
 pergunta = st.text_area(
     "Cole aqui a mensagem, SMS, e-mail ou conversa suspeita:",
     placeholder="Exemplo: Seu banco bloqueou sua conta. Clique no link para recadastrar sua senha...",
-    height=140
+    height=130
 )
 
-if st.button("🌐 ANALISAR E OUVIR AGORA 🎙️ 🔊"):
+if st.button("🌐 ANALISAR AGORA", type="primary", use_container_width=True):
     if pergunta.strip():
         sinais = analisar_golpe(pergunta)
         
         st.markdown("---")
         st.markdown("### 📊 Resultado da Análise Global")
         
+        texto_falar = ""
         if sinais:
             st.error("⚠️ **ALERTA: SINAIS TÍPICOS DE GOLPE DETECTADOS!**")
             st.write("Identificamos os seguintes padrões suspeitos nesta mensagem:")
@@ -137,46 +129,36 @@ if st.button("🌐 ANALISAR E OUVIR AGORA 🎙️ 🔊"):
 
         texto_limpo = texto_falar.replace('"', '').replace("'", "").replace('\n', ' ')
         
-        # Painel de Voz Inteligente com acionamento manual e automático
-        audio_html = f"""
-        <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 14px; border: 2px solid #00b9ff; box-shadow: 0 0 25px rgba(0, 185, 255, 0.3); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 32px; filter: drop-shadow(0 0 10px #00b9ff);">🎙️</span>
-                <span style="font-size: 32px; filter: drop-shadow(0 0 10px #00b9ff);">🔊</span>
+        # Componente HTML com botão interativo direto para disparar a fala sem bloqueio
+        audio_componente = f"""
+        <div style="margin-top: 15px; padding: 18px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 12px; border: 2px solid #00b9ff; box-shadow: 0 0 20px rgba(0, 185, 255, 0.3); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 28px;">🎙️</span>
+                <span style="font-size: 28px;">🔊</span>
                 <div>
-                    <div style="color: #6bd5ff; font-weight: bold; font-size: 18px;">Relatório de Áudio e Voz</div>
-                    <div style="color: #a5d8ff; font-size: 14px;">Clique no botão ao lado para ouvir em voz alta:</div>
+                    <div style="color: #6bd5ff; font-weight: bold; font-size: 16px;">Voz Sintetizada Ativa</div>
+                    <div style="color: #a5d8ff; font-size: 13px;">Clique no botão para ouvir o relatório:</div>
                 </div>
             </div>
-            <button id="btnFalar" onclick="executarFala()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 17px; box-shadow: 0 0 15px rgba(0, 185, 255, 0.5);">
-                🔊 OUVIR AGORA 🎙️
+            <button onclick="falar()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 0 12px rgba(0, 185, 255, 0.5);">
+                🔊 OUVIR EM VOZ ALTA
             </button>
         </div>
 
         <script>
-            function executarFala() {{
+            function falar() {{
                 if ('speechSynthesis' in window) {{
                     window.speechSynthesis.cancel();
                     var msg = new SpeechSynthesisUtterance("{texto_limpo}");
                     msg.lang = 'pt-BR';
                     msg.rate = 1.0;
-                    msg.pitch = 1.0;
-                    msg.volume = 1.0;
-                    
-                    var vozes = window.speechSynthesis.getVoices();
-                    var vozPt = vozes.find(function(v) {{ return v.lang.indexOf('pt') !== -1; }});
-                    if (vozPt) {{ msg.voice = vozPt; }}
-                    
                     window.speechSynthesis.speak(msg);
                 }} else {{
-                    alert('Seu navegador não suporta a síntese de voz.');
+                    alert('Seu navegador não suporta leitura de voz.');
                 }}
             }}
-            
-            // Tentativa de execução direta
-            setTimeout(executarFala, 400);
         </script>
         """
-        st.markdown(audio_html, unsafe_allow_html=True)
+        components.html(audio_componente, height=110)
     else:
         st.warning("Por favor, cole uma mensagem para que o sistema possa analisar.")
