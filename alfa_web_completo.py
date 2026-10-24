@@ -9,21 +9,26 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilo ajustado para evitar cortes na parte inferior e garantir respiro no chat
+# Estilo para remover rodapé, faixa branca e corrigir fundo total
 st.markdown("""
 <style>
+    /* Remove cabeçalho e rodapé padrão do Streamlit (a faixa branca) */
     header[data-testid="stHeader"] {
         display: none !important;
     }
+    footer {
+        display: none !important;
+    }
+    .stAppViewContainer, .main, .stApp {
+        background: radial-gradient(circle at top, #0f2347 0%, #030712 80%) !important;
+        color: #ffffff !important;
+    }
     .main .block-container {
         padding-top: 0.5rem !important;
-        padding-bottom: 6rem !important;
+        padding-bottom: 5rem !important;
         max-width: 1100px;
     }
-    .stApp {
-        background: radial-gradient(circle at top, #0f2347 0%, #030712 80%);
-        color: #ffffff;
-    }
+    
     .header-container {
         display: flex;
         flex-direction: column;
@@ -61,10 +66,6 @@ st.markdown("""
         margin-top: 4px;
         margin-bottom: 1rem;
         font-weight: 600;
-    }
-    /* Deixa a barra de input fixa e destacada em baixo */
-    .stChatInput {
-        padding-bottom: 1rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -123,7 +124,7 @@ for msg in st.session_state.mensagens:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
 
-# Entrada de chat contínua na parte inferior com respiro adequado
+# Entrada de chat contínua na parte inferior
 pergunta_usuario = st.chat_input("Digite sua consulta, pergunta ou cole uma mensagem suspeita...")
 
 if pergunta_usuario:
