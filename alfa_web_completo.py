@@ -6,37 +6,48 @@ st.set_page_config(
     layout="wide"
 )
 
+# Estilo para remover espacos no topo e ajustar Globo e Layout
 st.markdown("""
 <style>
+    /* Remove todo o espaco e padding do topo */
+    header[data-testid="stHeader"] {
+        display: none !important;
+    }
+    .main .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 2rem !important;
+        max-width: 1100px;
+    }
     .stApp {
         background: radial-gradient(circle at top, #0f2347 0%, #030712 80%);
         color: #ffffff;
     }
+    
     .header-container {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
+        margin-top: 0rem;
+        margin-bottom: 1rem;
     }
     .globo-3d-gigante {
-        width: 150px;
-        height: 150px;
+        width: 140px;
+        height: 140px;
         border-radius: 50%;
         background: radial-gradient(circle at 35% 35%, #6bd5ff, #087bff 55%, #020713 100%);
         box-shadow: 0 0 50px #00b9ff, inset -15px -15px 30px rgba(0,0,0,0.8);
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         animation: floatAndGlow 4s ease-in-out infinite alternate;
     }
     @keyframes floatAndGlow {
         0% { transform: translateY(0px) scale(1); box-shadow: 0 0 35px #087bff; }
-        100% { transform: translateY(-12px) scale(1.03); box-shadow: 0 0 65px #00b9ff; }
+        100% { transform: translateY(-10px) scale(1.03); box-shadow: 0 0 60px #00b9ff; }
     }
     .main-title {
         text-align: center;
         color: #6bd5ff;
-        font-size: 2.8rem;
+        font-size: 2.6rem;
         font-weight: 900;
         margin: 0;
         text-shadow: 0 0 25px #087bff;
@@ -45,9 +56,9 @@ st.markdown("""
     .sub-title {
         text-align: center;
         color: #a5d8ff;
-        font-size: 1.2rem;
-        margin-top: 8px;
-        margin-bottom: 2rem;
+        font-size: 1.1rem;
+        margin-top: 6px;
+        margin-bottom: 1.5rem;
         font-weight: 600;
     }
     .stTextArea textarea {
@@ -57,7 +68,7 @@ st.markdown("""
         border-radius: 12px;
         font-size: 16px;
     }
-    .stButton button, .stFormSubmitButton button {
+    .stButton button {
         background: linear-gradient(90deg, #087bff, #00b9ff);
         color: white;
         border: none;
@@ -65,6 +76,7 @@ st.markdown("""
         font-weight: bold;
         font-size: 18px;
         padding: 14px;
+        width: 100%;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -85,6 +97,7 @@ def analisar_golpe(texto):
             sinais.append(descricao)
     return sinais
 
+# Topo limpo colado no topo da pagina
 st.markdown("""
 <div class="header-container">
     <div class="globo-3d-gigante"></div>
@@ -98,7 +111,7 @@ st.markdown("### 🔎 Analisar Mensagem Suspeita")
 pergunta = st.text_area(
     "Cole aqui a mensagem, SMS, e-mail ou conversa suspeita:",
     placeholder="Exemplo: Seu banco bloqueou sua conta. Clique no link para recadastrar sua senha...",
-    height=150
+    height=140
 )
 
 if st.button("🌐 ANALISAR E OUVIR AGORA 🎙️ 🔊"):
@@ -124,34 +137,44 @@ if st.button("🌐 ANALISAR E OUVIR AGORA 🎙️ 🔊"):
 
         texto_limpo = texto_falar.replace('"', '').replace("'", "").replace('\n', ' ')
         
+        # Painel de Voz Inteligente com acionamento manual e automático
         audio_html = f"""
         <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 14px; border: 2px solid #00b9ff; box-shadow: 0 0 25px rgba(0, 185, 255, 0.3); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 32px; filter: drop-shadow(0 0 10px #00b9ff);">🎙️</span>
                 <span style="font-size: 32px; filter: drop-shadow(0 0 10px #00b9ff);">🔊</span>
                 <div>
-                    <div style="color: #6bd5ff; font-weight: bold; font-size: 18px;">Voz e Áudio da IA ALFA</div>
-                    <div style="color: #a5d8ff; font-size: 14px;">Aperte o botão ao lado para ouvir o relatório em voz alta!</div>
+                    <div style="color: #6bd5ff; font-weight: bold; font-size: 18px;">Relatório de Áudio e Voz</div>
+                    <div style="color: #a5d8ff; font-size: 14px;">Clique no botão ao lado para ouvir em voz alta:</div>
                 </div>
             </div>
-            <button onclick="falarVozIA()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 0 15px rgba(0, 185, 255, 0.5);">
-                🔊 OUVIR RELATÓRIO 🎙️
+            <button id="btnFalar" onclick="executarFala()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 17px; box-shadow: 0 0 15px rgba(0, 185, 255, 0.5);">
+                🔊 OUVIR AGORA 🎙️
             </button>
         </div>
 
         <script>
-            function falarVozIA() {{
+            function executarFala() {{
                 if ('speechSynthesis' in window) {{
                     window.speechSynthesis.cancel();
-                    var fala = new SpeechSynthesisUtterance("{texto_limpo}");
-                    fala.lang = 'pt-BR';
-                    fala.rate = 1.0;
-                    fala.pitch = 1.0;
-                    fala.volume = 1.0;
-                    window.speechSynthesis.speak(fala);
+                    var msg = new SpeechSynthesisUtterance("{texto_limpo}");
+                    msg.lang = 'pt-BR';
+                    msg.rate = 1.0;
+                    msg.pitch = 1.0;
+                    msg.volume = 1.0;
+                    
+                    var vozes = window.speechSynthesis.getVoices();
+                    var vozPt = vozes.find(function(v) {{ return v.lang.indexOf('pt') !== -1; }});
+                    if (vozPt) {{ msg.voice = vozPt; }}
+                    
+                    window.speechSynthesis.speak(msg);
+                }} else {{
+                    alert('Seu navegador não suporta a síntese de voz.');
                 }}
             }}
-            setTimeout(falarVozIA, 300);
+            
+            // Tentativa de execução direta
+            setTimeout(executarFala, 400);
         </script>
         """
         st.markdown(audio_html, unsafe_allow_html=True)
