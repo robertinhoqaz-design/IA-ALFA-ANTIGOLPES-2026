@@ -1,20 +1,20 @@
 ﻿import streamlit as st
 
 st.set_page_config(
-    page_title="IA ALFA Antigolpes",
+    page_title="IA ALFA Mundo Digital",
     page_icon="🌐",
     layout="wide"
 )
 
-# Estilo Visual 3D Futurista com Globo Centralizado e sem Escudos
+# Estilo Futurista com Globo 3D Esférico e Painel de Áudio + Microfone Integrados
 st.markdown('''
 <style>
     .stApp {
-        background: radial-gradient(circle at top, #0f1c3f 0%, #050b18 70%);
+        background: radial-gradient(circle at top, #0d1b3a 0%, #030712 75%);
         color: #ffffff;
     }
     
-    /* Globo 3D Holográfico Centralizado */
+    /* Globo Esférico 3D Limpo no Centro */
     .header-container {
         display: flex;
         flex-direction: column;
@@ -23,26 +23,18 @@ st.markdown('''
         margin-top: 1rem;
         margin-bottom: 1rem;
     }
-    .globo-3d {
-        width: 110px;
-        height: 110px;
-        background: radial-gradient(circle, rgba(76,201,240,0.3) 0%, rgba(0,0,0,0) 75%);
+    .globo-3d-clean {
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 30px #087bff;
+        background: radial-gradient(circle at 30% 30%, #4cc9f0, #087bff 60%, #030712 100%);
+        box-shadow: 0 0 35px #00b9ff, inset -10px -10px 20px rgba(0,0,0,0.6);
         margin-bottom: 15px;
-        animation: pulseGlobo 4s infinite alternate;
+        animation: floatGlobo 3s ease-in-out infinite alternate;
     }
-    @keyframes pulseGlobo {
-        0% { transform: scale(1); box-shadow: 0 0 20px #087bff; }
-        100% { transform: scale(1.05); box-shadow: 0 0 35px #00b9ff; }
-    }
-    .globo-svg {
-        width: 75px;
-        height: 75px;
-        filter: drop-shadow(0px 0px 12px #4cc9f0);
+    @keyframes floatGlobo {
+        0% { transform: translateY(0px); box-shadow: 0 0 25px #087bff; }
+        100% { transform: translateY(-8px); box-shadow: 0 0 45px #00b9ff; }
     }
     
     .main-title {
@@ -51,7 +43,7 @@ st.markdown('''
         font-size: 2.5rem;
         font-weight: 900;
         margin: 0;
-        text-shadow: 0 0 18px #087bff;
+        text-shadow: 0 0 20px #087bff;
         letter-spacing: 1.5px;
     }
     .sub-title {
@@ -63,7 +55,7 @@ st.markdown('''
         font-weight: 500;
     }
 
-    /* Estilo da caixa de texto e botões */
+    /* Caixa de Entrada e Botão */
     .stTextArea textarea {
         background-color: #0b192d;
         color: #ffffff;
@@ -99,18 +91,12 @@ def analisar_golpe(texto):
             sinais.append(descricao)
     return sinais
 
-# Topo com Globo 3D Holográfico Centralizado e Microfone (Sem Escudos)
+# Cabeçalho com Globo 3D Esférico Limpo
 st.markdown('''
 <div class="header-container">
-    <div class="globo-3d">
-        <svg class="globo-svg" viewBox="0 0 24 24" fill="none" stroke="#4cc9f0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="2" y1="12" x2="22" y2="12"></line>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-        </svg>
-    </div>
+    <div class="globo-3d-clean"></div>
     <h1 class="main-title">🌐 IA ALFA MUNDO DIGITAL</h1>
-    <p class="sub-title">SISTEMA GLOBAL DE ANÁLISE E VOZ INTELIGENTE 🎙️</p>
+    <p class="sub-title">SISTEMA GLOBAL DE ANÁLISE E VOZ AUTOMÁTICA 🎙️ 🔊</p>
 </div>
 ''', unsafe_allow_html=True)
 
@@ -122,7 +108,7 @@ with st.form("formulario_analise"):
         placeholder="Exemplo: Seu banco bloqueou sua conta. Clique no link para recadastrar sua senha...",
         height=150
     )
-    enviar = st.form_submit_button("🌐 ANALISAR E OUVIR RESULTADO 🎙️")
+    enviar = st.form_submit_button("🌐 ANALISAR E OUVIR AGORA 🎙️ 🔊")
 
 if enviar:
     if pergunta.strip():
@@ -148,15 +134,19 @@ if enviar:
 
         texto_seguro = texto_resultado.replace('"', '\\"').replace("\n", " ")
         
-        # Painel de Áudio Automático com Microfone
+        # Painel Unificado de Microfone 🎙️ + Áudio 🔊 com Design Elegante
         audio_html = f"""
-        <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 12px; border: 1px solid #00b9ff; box-shadow: 0 0 15px rgba(0, 185, 255, 0.2);">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                <span style="font-size: 24px;">🎙️</span>
-                <span style="color: #4cc9f0; font-weight: bold; font-size: 16px;">Sintetizador de Voz Automático</span>
+        <div style="margin-top: 20px; padding: 18px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 14px; border: 1px solid #4cc9f0; box-shadow: 0 0 20px rgba(76, 201, 240, 0.25); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 28px; filter: drop-shadow(0 0 8px #00b9ff);">🎙️</span>
+                <span style="font-size: 28px; filter: drop-shadow(0 0 8px #00b9ff);">🔊</span>
+                <div>
+                    <div style="color: #4cc9f0; font-weight: bold; font-size: 17px;">Sintetizador de Áudio e Voz</div>
+                    <div style="color: #a5d8ff; font-size: 13px;">Leitura automática ativada</div>
+                </div>
             </div>
-            <button onclick="falarTexto()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;">
-                🔊 Ouvir Relatório Novamente
+            <button onclick="falarTexto()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 10px 22px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; box-shadow: 0 0 10px rgba(0, 185, 255, 0.4);">
+                🔊 Reproduzir Novamente
             </button>
         </div>
         <script>
@@ -169,7 +159,6 @@ if enviar:
                     window.speechSynthesis.speak(msg);
                 }}
             }}
-            // Dispara a leitura em voz alta automaticamente ao exibir o resultado
             setTimeout(falarTexto, 500);
         </script>
         """
