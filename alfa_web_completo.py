@@ -6,15 +6,12 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilo com Globo 3D Gigante e Animação de Rotação Suave
-st.markdown('''
+st.markdown("""
 <style>
     .stApp {
         background: radial-gradient(circle at top, #0f2347 0%, #030712 80%);
         color: #ffffff;
     }
-    
-    /* Globo 3D Gigante e Brilhante */
     .header-container {
         display: flex;
         flex-direction: column;
@@ -36,7 +33,6 @@ st.markdown('''
         0% { transform: translateY(0px) scale(1); box-shadow: 0 0 35px #087bff; }
         100% { transform: translateY(-12px) scale(1.03); box-shadow: 0 0 65px #00b9ff; }
     }
-    
     .main-title {
         text-align: center;
         color: #6bd5ff;
@@ -54,7 +50,6 @@ st.markdown('''
         margin-bottom: 2rem;
         font-weight: 600;
     }
-
     .stTextArea textarea {
         background-color: #0b192d;
         color: #ffffff;
@@ -72,10 +67,10 @@ st.markdown('''
         padding: 14px;
     }
 </style>
-''', unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 def analisar_golpe(texto):
-    texto = texto.lower()
+    texto_lower = texto.lower()
     sinais = []
     regras = [
         (["pix", "transferência", "transferencia", "depósito", "deposito"], "Menção a Pix, depósito ou transferência bancária."),
@@ -86,37 +81,33 @@ def analisar_golpe(texto):
         (["clique aqui", "acesse o link", "link abaixo", "http", "https"], "Incentivo para clicar em links externos suspeitos.")
     ]
     for palavras, descricao in regras:
-        if any(p in texto for p in palavras):
+        if any(p in texto_lower for p in palavras):
             sinais.append(descricao)
     return sinais
 
-# Topo com Globo 3D Gigante
-st.markdown('''
+st.markdown("""
 <div class="header-container">
     <div class="globo-3d-gigante"></div>
     <h1 class="main-title">🌐 IA ALFA MUNDO DIGITAL</h1>
     <p class="sub-title">SISTEMA GLOBAL DE ANÁLISE E VOZ AUTOMÁTICA 🎙️ 🔊</p>
 </div>
-''', unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 st.markdown("### 🔎 Analisar Mensagem Suspeita")
 
-with st.form("formulario_analise"):
-    pergunta = st.text_area(
-        "Cole aqui a mensagem, SMS, e-mail ou conversa suspeita:",
-        placeholder="Exemplo: Seu banco bloqueou sua conta. Clique no link para recadastrar sua senha...",
-        height=150
-    )
-    enviar = st.form_submit_button("🌐 ANALISAR E OUVIR AGORA 🎙️ 🔊")
+pergunta = st.text_area(
+    "Cole aqui a mensagem, SMS, e-mail ou conversa suspeita:",
+    placeholder="Exemplo: Seu banco bloqueou sua conta. Clique no link para recadastrar sua senha...",
+    height=150
+)
 
-if enviar:
+if st.button("🌐 ANALISAR E OUVIR AGORA 🎙️ 🔊"):
     if pergunta.strip():
         sinais = analisar_golpe(pergunta)
         
         st.markdown("---")
         st.markdown("### 📊 Resultado da Análise Global")
         
-        texto_falar = ""
         if sinais:
             st.error("⚠️ **ALERTA: SINAIS TÍPICOS DE GOLPE DETECTADOS!**")
             st.write("Identificamos os seguintes padrões suspeitos nesta mensagem:")
@@ -131,10 +122,8 @@ if enviar:
             st.info("💡 **Dica de segurança:** Mesmo que nada crítico tenha sido detectado, lembre-se de nunca compartilhar dados confidenciais.")
             texto_falar = "Nenhum sinal direto de golpe foi identificado. Lembre-se de nunca compartilhar dados confidenciais."
 
-        # Limpa aspas e quebras de linha para não quebrar o código de voz
         texto_limpo = texto_falar.replace('"', '').replace("'", "").replace('\n', ' ')
         
-        # Painel de Áudio Unificado com Leitura Robusta em JS
         audio_html = f"""
         <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 14px; border: 2px solid #00b9ff; box-shadow: 0 0 25px rgba(0, 185, 255, 0.3); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -142,41 +131,27 @@ if enviar:
                 <span style="font-size: 32px; filter: drop-shadow(0 0 10px #00b9ff);">🔊</span>
                 <div>
                     <div style="color: #6bd5ff; font-weight: bold; font-size: 18px;">Voz e Áudio da IA ALFA</div>
-                    <div style="color: #a5d8ff; font-size: 14px;">Reproduzindo relatório em Português...</div>
+                    <div style="color: #a5d8ff; font-size: 14px;">Aperte o botão ao lado para ouvir o relatório em voz alta!</div>
                 </div>
             </div>
             <button onclick="falarVozIA()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 0 15px rgba(0, 185, 255, 0.5);">
-                🔊 OUVIR NOVAMENTE 🎙️
+                🔊 OUVIR RELATÓRIO 🎙️
             </button>
         </div>
 
         <script>
             function falarVozIA() {{
                 if ('speechSynthesis' in window) {{
-                    window.speechSynthesis.cancel(); // Para qualquer fala em andamento
-                    
+                    window.speechSynthesis.cancel();
                     var fala = new SpeechSynthesisUtterance("{texto_limpo}");
                     fala.lang = 'pt-BR';
                     fala.rate = 1.0;
                     fala.pitch = 1.0;
                     fala.volume = 1.0;
-                    
-                    // Procura voz nativa em Português do Brasil
-                    var voices = window.speechSynthesis.getVoices();
-                    var vozPt = voices.find(function(v) {{ return v.lang.includes('pt') || v.lang.includes('BR'); }});
-                    if (vozPt) {{ fala.voice = vozPt; }}
-                    
                     window.speechSynthesis.speak(fala);
                 }}
             }}
-
-            // Tenta falar automaticamente e trata carregamento das vozes do navegador
-            if ('speechSynthesis' in window) {{
-                window.speechSynthesis.onvoiceschanged = function() {{
-                    falarVozIA();
-                }};
-                setTimeout(falarVozIA, 300);
-            }}
+            setTimeout(falarVozIA, 300);
         </script>
         """
         st.markdown(audio_html, unsafe_allow_html=True)
