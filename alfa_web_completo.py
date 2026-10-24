@@ -3,13 +3,6 @@ import streamlit.components.v1 as components
 import requests
 import re
 import html
-import ipaddress
-import json
-
-try:
-    import pyttsx3
-except ImportError:
-    pyttsx3 = None
 
 try:
     from ddgs import DDGS
@@ -26,7 +19,7 @@ st.set_page_config(
 OLLAMA_URL = "http://localhost:11434/api/chat"
 MODELO_IA = "qwen2.5:0.5b"
 
-st.markdown(\"\"\"
+st.markdown("""
 <style>
 .stApp {
     background: linear-gradient(145deg, #07101e, #102747, #07101e);
@@ -58,12 +51,6 @@ h1, h2, h3, p, label {
     font-size: 16px;
     margin: 8px 0 20px 0;
 }
-.alfa-status {
-    text-align: center;
-    color: #78ffbc;
-    font-size: 13px;
-    margin-bottom: 15px;
-}
 .stTextArea textarea {
     background: #0b192d;
     color: white;
@@ -81,18 +68,13 @@ h1, h2, h3, p, label {
     border-radius: 10px;
     font-weight: bold;
 }
-.stButton button:hover,
-.stFormSubmitButton button:hover {
-    border: 1px solid #9ce7ff;
-    color: white;
-}
 div[data-testid="stSidebar"] {
     background: #081426;
 }
 </style>
-\"\"\", unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-globo_html = \"\"\"
+globo_html = """
 <!DOCTYPE html>
 <html>
 <head>
@@ -112,7 +94,7 @@ html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
 <div class="palco"><div class="globo"></div></div>
 </body>
 </html>
-\"\"\"
+"""
 
 def analisar_golpe(texto):
     texto = texto.lower()
