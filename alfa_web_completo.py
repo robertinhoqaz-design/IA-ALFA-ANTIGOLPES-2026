@@ -1,5 +1,7 @@
 ﻿import streamlit as st
 import streamlit.components.v1 as components
+import requests
+import json
 
 st.set_page_config(
     page_title="IA ALFA Mundo Digital",
@@ -7,10 +9,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilo para colar no topo e zerar qualquer espaco em branco
+# Estilo visual moderno e limpo
 st.markdown("""
 <style>
-    /* Remove barra superior e espacos extras do Streamlit */
     header[data-testid="stHeader"] {
         display: none !important;
     }
@@ -23,7 +24,6 @@ st.markdown("""
         background: radial-gradient(circle at top, #0f2347 0%, #030712 80%);
         color: #ffffff;
     }
-    
     .header-container {
         display: flex;
         flex-direction: column;
@@ -72,7 +72,34 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-def analisar_golpe(texto):
+# Função para consultar a API oficial do Gemini (via Streamlit Secrets)
+def perguntar_ao_gemini(pergunta):
+    # Tenta buscar a chave de API configurada no Streamlit Cloud
+    api_key = st.secrets.get("GEMINI_API_KEY", "")
+    
+    if not api_key:
+        # Se não houver chave configurada, usa o modo inteligente de regras de golpe + fallback explicativo
+        return analisar_modo_local(pergunta)
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "contents": [{
+            "parts": [{"text": f"Você é a IA ALFA, uma inteligência artificial global avançada, útil e polivalente. Responda à seguinte pergunta de forma clara, prestativa e em português do Brasil: {pergunta}"}]
+        }]
+    }
+    
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            return data["candidates"][0]["content"]["parts"][0]["text"]
+        else:
+            return "Erro ao conectar com a API do Gemini. Verifique sua chave nas configurações do Streamlit Cloud."
+    except Exception as e:
+        return f"Ocorreu um erro de conexão: {str(e)}"
+
+def analisar_modo_local(texto):
     texto_lower = texto.lower()
     sinais = []
     regras = [
@@ -86,50 +113,41 @@ def analisar_golpe(texto):
     for palavras, descricao in regras:
         if any(p in texto_lower for p in palavras):
             sinais.append(descricao)
-    return sinais
+            
+    if sinais:
+        resultado = "⚠️ ALERTA DE SEGURANÇA: Detectamos possíveis sinais de golpe! Padrões encontrados: " + ", ".join(sinais) + ". Recomendação: Não clique em links e não envie dinheiro."
+        return resultado
+    else:
+        return f"Olá! Como assistente IA ALFA, analisei sua mensagem ('{texto}') e não encontrei sinais diretos de fraude. Se esta for uma pergunta geral, lembre-se de configurar a sua chave GEMINI_API_KEY nos segredos do Streamlit Cloud para respostas livres ilimitadas sobre qualquer assunto!"
 
-# Topo colado perfeitamente no topo
+# Topo limpo
 st.markdown("""
 <div class="header-container">
     <div class="globo-3d-gigante"></div>
     <h1 class="main-title">🌐 IA ALFA MUNDO DIGITAL</h1>
-    <p class="sub-title">SISTEMA GLOBAL DE ANÁLISE E VOZ INTELIGENTE 🎙️ 🔊</p>
+    <p class="sub-title">SISTEMA GLOBAL DE INTELIGÊNCIA E VOZ 🎙️ 🔊</p>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("### 🔎 Analisar Mensagem Suspeita")
+st.markdown("### 💬 Pergunte ou Analise Qualquer Coisa")
 
 pergunta = st.text_area(
-    "Cole aqui a mensagem, SMS, e-mail ou conversa suspeita:",
-    placeholder="Exemplo: Seu banco bloqueou sua conta. Clique no link para recadastrar sua senha...",
+    "Digite sua dúvida, pergunta geral ou cole uma mensagem suspeita:",
+    placeholder="Exemplo: Explique como funciona a gravidade, ou verifique se esta mensagem é golpe...",
     height=130
 )
 
-if st.button("🌐 ANALISAR AGORA", type="primary", use_container_width=True):
+if st.button("🌐 PERGUNTAR E OUVIR", type="primary", use_container_width=True):
     if pergunta.strip():
-        sinais = analisar_golpe(pergunta)
+        with st.spinner("A IA ALFA está processando sua resposta..."):
+            resposta_ia = perguntar_ao_gemini(pergunta)
         
         st.markdown("---")
-        st.markdown("### 📊 Resultado da Análise Global")
-        
-        texto_falar = ""
-        if sinais:
-            st.error("⚠️ **ALERTA: SINAIS TÍPICOS DE GOLPE DETECTADOS!**")
-            st.write("Identificamos os seguintes padrões suspeitos nesta mensagem:")
-            texto_falar = "Atenção! Alerta de golpe detectado. Identificamos os seguintes padrões suspeitos na mensagem: "
-            for s in sinais:
-                st.markdown(f"- 🔴 **{s}**")
-                texto_falar += f"{s}. "
-            st.warning("👉 **Recomendação:** Não clique em links, não envie dinheiro por Pix e não forneça dados pessoais ou senhas.")
-            texto_falar += "Recomendação: Não clique em links, não envie dinheiro por Pix e não forneça dados pessoais."
-        else:
-            st.success("✅ **NENHUM SINAL DIRETO DE GOLPE IDENTIFICADO PELAS REGRAS.**")
-            st.info("💡 **Dica de segurança:** Mesmo que nada crítico tenha sido detectado, lembre-se de nunca compartilhar dados confidenciais.")
-            texto_falar = "Nenhum sinal direto de golpe foi identificado. Lembre-se de nunca compartilhar dados confidenciais."
+        st.markdown("### 📊 Resposta da IA ALFA")
+        st.write(resposta_ia)
 
-        texto_limpo = texto_falar.replace('"', '').replace("'", "").replace('\n', ' ')
+        texto_limpo = resposta_ia.replace('"', '').replace("'", "").replace('\n', ' ')
         
-        # Componente HTML com botão interativo direto para disparar a fala sem bloqueio
         audio_componente = f"""
         <div style="margin-top: 15px; padding: 18px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 12px; border: 2px solid #00b9ff; box-shadow: 0 0 20px rgba(0, 185, 255, 0.3); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -137,7 +155,7 @@ if st.button("🌐 ANALISAR AGORA", type="primary", use_container_width=True):
                 <span style="font-size: 28px;">🔊</span>
                 <div>
                     <div style="color: #6bd5ff; font-weight: bold; font-size: 16px;">Voz Sintetizada Ativa</div>
-                    <div style="color: #a5d8ff; font-size: 13px;">Clique no botão para ouvir o relatório:</div>
+                    <div style="color: #a5d8ff; font-size: 13px;">Clique no botão para ouvir a resposta:</div>
                 </div>
             </div>
             <button onclick="falar()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 0 12px rgba(0, 185, 255, 0.5);">
@@ -161,4 +179,4 @@ if st.button("🌐 ANALISAR AGORA", type="primary", use_container_width=True):
         """
         components.html(audio_componente, height=110)
     else:
-        st.warning("Por favor, cole uma mensagem para que o sistema possa analisar.")
+        st.warning("Por favor, digite uma pergunta ou mensagem.")
