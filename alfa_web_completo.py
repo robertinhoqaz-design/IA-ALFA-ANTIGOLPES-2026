@@ -6,7 +6,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilo visual responsivo com fundo escuro elegante
 st.markdown('''
 <style>
     .stApp {
@@ -51,7 +50,6 @@ def analisar_golpe(texto):
             sinais.append(descricao)
     return sinais
 
-# Cabeçalho com o Globo e o Microfone
 st.markdown('<h1 class="main-title">🌐 🛡️ 🎤 IA ALFA ANTIGOLPES</h1>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">ASSISTENTE DE SEGURANÇA DIGITAL GLOBAL</p>', unsafe_allow_html=True)
 
@@ -87,11 +85,9 @@ if enviar:
             st.info("💡 **Dica de segurança:** Mesmo que nada crítico tenha sido detectado, lembre-se de nunca compartilhar dados confidenciais se não tiver certeza da identidade de quem enviou a mensagem.")
             texto_resultado = "Nenhum sinal direto de golpe foi identificado pelas regras padrão. Dica de segurança: Lembre-se de nunca compartilhar dados confidenciais."
 
-        # Recurso de Leitura Automática por Voz (JavaScript Nativo no Navegador)
-        # Sanitiza o texto para evitar quebras no script JavaScript
-        texto_seguro = texto_resultado.replace('"', '\\"').replace('\n', ' ')
+        texto_seguro = texto_resultado.replace('"', '\\"').replace("\n", " ")
         
-        audio_html = f\"\"\"
+        audio_html = f"""
         <div style="margin-top: 15px; padding: 10px; background-color: #1c2541; border-radius: 8px; border: 1px solid #4cc9f0;">
             <p style="margin: 0 0 8px 0; color: #4cc9f0; font-weight: bold;">🎤 Leitura por Voz da IA ALFA:</p>
             <button onclick="falarTexto()" style="background-color: #4cc9f0; color: #0b132b; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">
@@ -108,11 +104,9 @@ if enviar:
                     window.speechSynthesis.speak(msg);
                 }}
             }}
-            // Dispara a leitura automática logo que o resultado aparece na tela
             setTimeout(falarTexto, 500);
         </script>
-        \"\"\"
+        """
         st.markdown(audio_html, unsafe_allow_html=True)
-
     else:
         st.warning("Por favor, cole uma mensagem para que a IA ALFA possa analisar.")
