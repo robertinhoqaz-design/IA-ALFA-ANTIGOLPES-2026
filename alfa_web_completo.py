@@ -2,15 +2,15 @@
 
 st.set_page_config(
     page_title="IA ALFA Antigolpes",
-    page_icon="🛡️",
+    page_icon="🌐",
     layout="wide"
 )
 
-# Estilo Futurista de Alta Definição
+# Estilo Visual 3D Futurista com Globo Centralizado e sem Escudos
 st.markdown('''
 <style>
     .stApp {
-        background: radial-gradient(circle at top, #102747 0%, #07101e 70%);
+        background: radial-gradient(circle at top, #0f1c3f 0%, #050b18 70%);
         color: #ffffff;
     }
     
@@ -23,21 +23,26 @@ st.markdown('''
         margin-top: 1rem;
         margin-bottom: 1rem;
     }
-    .globo-original {
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, rgba(76,201,240,0.2) 0%, rgba(0,0,0,0) 70%);
+    .globo-3d {
+        width: 110px;
+        height: 110px;
+        background: radial-gradient(circle, rgba(76,201,240,0.3) 0%, rgba(0,0,0,0) 75%);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 0 25px #087bff;
+        box-shadow: 0 0 30px #087bff;
         margin-bottom: 15px;
+        animation: pulseGlobo 4s infinite alternate;
+    }
+    @keyframes pulseGlobo {
+        0% { transform: scale(1); box-shadow: 0 0 20px #087bff; }
+        100% { transform: scale(1.05); box-shadow: 0 0 35px #00b9ff; }
     }
     .globo-svg {
-        width: 65px;
-        height: 65px;
-        filter: drop-shadow(0px 0px 10px #4cc9f0);
+        width: 75px;
+        height: 75px;
+        filter: drop-shadow(0px 0px 12px #4cc9f0);
     }
     
     .main-title {
@@ -53,7 +58,7 @@ st.markdown('''
         text-align: center;
         color: #a5d8ff;
         font-size: 1.1rem;
-        margin-top: 5px;
+        margin-top: 8px;
         margin-bottom: 2rem;
         font-weight: 500;
     }
@@ -94,18 +99,18 @@ def analisar_golpe(texto):
             sinais.append(descricao)
     return sinais
 
-# Topo Original Centralizado com Globo Neon Holográfico
+# Topo com Globo 3D Holográfico Centralizado e Microfone (Sem Escudos)
 st.markdown('''
 <div class="header-container">
-    <div class="globo-original">
+    <div class="globo-3d">
         <svg class="globo-svg" viewBox="0 0 24 24" fill="none" stroke="#4cc9f0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="2" y1="12" x2="22" y2="12"></line>
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
         </svg>
     </div>
-    <h1 class="main-title">🛡️ IA ALFA ANTIGOLPES</h1>
-    <p class="sub-title">🌐 SISTEMA GLOBAL DE SEGURANÇA DIGITAL E VOZ INTELIGENTE 🎙️</p>
+    <h1 class="main-title">🌐 IA ALFA MUNDO DIGITAL</h1>
+    <p class="sub-title">SISTEMA GLOBAL DE ANÁLISE E VOZ INTELIGENTE 🎙️</p>
 </div>
 ''', unsafe_allow_html=True)
 
@@ -117,14 +122,14 @@ with st.form("formulario_analise"):
         placeholder="Exemplo: Seu banco bloqueou sua conta. Clique no link para recadastrar sua senha...",
         height=150
     )
-    enviar = st.form_submit_button("🛡️ ANALISAR E OUVIR RESULTADO 🎙️")
+    enviar = st.form_submit_button("🌐 ANALISAR E OUVIR RESULTADO 🎙️")
 
 if enviar:
     if pergunta.strip():
         sinais = analisar_golpe(pergunta)
         
         st.markdown("---")
-        st.markdown("### 📊 Resultado da Análise de Segurança")
+        st.markdown("### 📊 Resultado da Análise Global")
         
         texto_resultado = ""
         if sinais:
@@ -137,20 +142,20 @@ if enviar:
             st.warning("👉 **Recomendação:** Não clique em links, não envie dinheiro por Pix e não forneça dados pessoais ou senhas.")
             texto_resultado += "Recomendação: Não clique em links, não envie dinheiro por Pix e não forneça dados pessoais."
         else:
-            st.success("✅ **NENHUM SINAL DIRETO DE GOLPE IDENTIFICADO PELAS REGRAS PADRÃO.**")
-            st.info("💡 **Dica de segurança:** Mesmo que nada crítico tenha sido detectado, lembre-se de nunca compartilhar dados confidenciais se não tiver certeza da identidade do remetente.")
+            st.success("✅ **NENHUM SINAL DIRETO DE GOLPE IDENTIFICADO PELAS REGRAS.**")
+            st.info("💡 **Dica de segurança:** Mesmo que nada crítico tenha sido detectado, lembre-se de nunca compartilhar dados confidenciais.")
             texto_resultado = "Nenhum sinal direto de golpe foi identificado. Lembre-se de nunca compartilhar dados confidenciais."
 
         texto_seguro = texto_resultado.replace('"', '\\"').replace("\n", " ")
         
-        # Painel de Áudio com Microfone Integrado
+        # Painel de Áudio Automático com Microfone
         audio_html = f"""
         <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 12px; border: 1px solid #00b9ff; box-shadow: 0 0 15px rgba(0, 185, 255, 0.2);">
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
                 <span style="font-size: 24px;">🎙️</span>
-                <span style="color: #4cc9f0; font-weight: bold; font-size: 16px;">Sintetizador de Voz IA ALFA</span>
+                <span style="color: #4cc9f0; font-weight: bold; font-size: 16px;">Sintetizador de Voz Automático</span>
             </div>
-            <button onclick="falarTexto()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+            <button onclick="falarTexto()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;">
                 🔊 Ouvir Relatório Novamente
             </button>
         </div>
@@ -164,9 +169,10 @@ if enviar:
                     window.speechSynthesis.speak(msg);
                 }}
             }}
-            setTimeout(falarTexto, 600);
+            // Dispara a leitura em voz alta automaticamente ao exibir o resultado
+            setTimeout(falarTexto, 500);
         </script>
         """
         st.markdown(audio_html, unsafe_allow_html=True)
     else:
-        st.warning("Por favor, cole uma mensagem para que a IA ALFA possa analisar.")
+        st.warning("Por favor, cole uma mensagem para que o sistema possa analisar.")
