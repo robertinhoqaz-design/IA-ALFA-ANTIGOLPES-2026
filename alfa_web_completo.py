@@ -1,5 +1,4 @@
 ﻿import streamlit as st
-import streamlit.components.v1 as components
 import requests
 import re
 import html
@@ -9,6 +8,7 @@ try:
 except ImportError:
     DDGS = None
 
+# Configuração da página
 st.set_page_config(
     page_title="IA ALFA Antigolpes",
     page_icon="🛡️",
@@ -19,6 +19,7 @@ st.set_page_config(
 OLLAMA_URL = "http://localhost:11434/api/chat"
 MODELO_IA = "qwen2.5:0.5b"
 
+# Estilo da interface
 st.markdown("""
 <style>
 .stApp {
@@ -58,8 +59,7 @@ h1, h2, h3, p, label {
     border-radius: 12px;
     font-size: 16px;
 }
-.stButton button,
-.stFormSubmitButton button {
+.stButton button, .stFormSubmitButton button {
     width: 100%;
     min-height: 45px;
     background: linear-gradient(90deg, #087bff, #00b9ff);
@@ -68,33 +68,8 @@ h1, h2, h3, p, label {
     border-radius: 10px;
     font-weight: bold;
 }
-div[data-testid="stSidebar"] {
-    background: #081426;
-}
 </style>
 """, unsafe_allow_html=True)
-
-globo_html = """
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
-.palco { height: 330px; display: flex; align-items: center; justify-content: center; }
-.globo {
-    width: 245px; height: 245px; border-radius: 50%; position: relative; overflow: hidden;
-    background: radial-gradient(circle at 30% 25%, #a5edff, #1689ff 23%, #0750b5 52%, #06183e 78%, #020916);
-    box-shadow: 0 0 25px #168bff, 0 0 60px rgba(0, 125, 255, 0.5);
-    animation: flutuar 4s ease-in-out infinite;
-}
-@keyframes flutuar { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
-</style>
-</head>
-<body>
-<div class="palco"><div class="globo"></div></div>
-</body>
-</html>
-"""
 
 def analisar_golpe(texto):
     texto = texto.lower()
@@ -114,30 +89,6 @@ def analisar_golpe(texto):
         sinais.append("Nenhum sinal conhecido foi identificado pelas regras básicas.")
     return sinais
 
-def pesquisar_internet(consulta):
-    fontes = []
-    if DDGS is None:
-        return fontes
-    try:
-        with DDGS() as busca:
-            resultados = busca.text(consulta + " golpe fraude Brasil", region="br-pt", max_results=3)
-            for item in resultados:
-                fontes.append({"titulo": item.get("title", "Resultado"), "url": item.get("href", ""), "resumo": item.get("body", "")})
-    except Exception:
-        pass
-    return fontes
-
-def consultar_ia(pergunta, sinais, fontes):
-    contexto_fontes = "".join(f"\nTítulo: {f['titulo']}\nResumo: {f['resumo']}\n" for f in fontes)
-    contexto_sinais = "\n".join(f"- {s}" for s in sinais)
-    mensagens = [
-        {"role": "system", "content": f"Você é a IA ALFA, especialista em prevenção de golpes digitais. Sinais encontrados:\n{contexto_sinais}\n\nFontes:\n{contexto_fontes}"},
-        {"role": "user", "content": pergunta}
-    ]
-    resposta = requests.post(OLLAMA_URL, json={"model": MODELO_IA, "messages": mensagens, "stream": False}, timeout=120)
-    resposta.raise_for_status()
-    return resposta.json()["message"]["content"]
-
 if "historico_alfa" not in st.session_state:
     st.session_state.historico_alfa = []
 if "ultima_resposta" not in st.session_state:
@@ -145,7 +96,6 @@ if "ultima_resposta" not in st.session_state:
 
 st.markdown('<div class="alfa-titulo">IA ALFA</div>', unsafe_allow_html=True)
 st.markdown('<div class="alfa-descricao">ANTIGOLPES • ASSISTENTE DE SEGURANÇA DIGITAL</div>', unsafe_allow_html=True)
-components.html(globo_html, height=335, scrolling=False, key="globo_header")
 
 st.markdown("### 🔎 Analisar mensagem")
 with st.form("formulario_analise"):
@@ -155,12 +105,11 @@ with st.form("formulario_analise"):
 if enviar and pergunta.strip():
     pergunta = pergunta.strip()
     sinais = analisar_golpe(pergunta)
-    with st.spinner("Analisando a mensagem..."):
-        fontes = pesquisar_internet(pergunta)
-        try:
-            resposta = consultar_ia(pergunta, sinais, fontes)
-        except Exception:
-            resposta = "Não foi possível consultar a IA local. Verifique se o Ollama está aberto."
+    
+    resposta = "### 🛡️ Análise de Segurança\n\n"
+    resposta += "**Sinais identificados na mensagem:**\n"
+    for s in sinais:
+        resposta += f"- {s}\n"
     
     st.session_state.ultima_resposta = resposta
     st.session_state.historico_alfa.append({"pergunta": pergunta, "resposta": resposta})
@@ -168,5 +117,5 @@ if enviar and pergunta.strip():
 
 if st.session_state.ultima_resposta:
     st.markdown("---")
-    st.markdown("### 🔊 Última resposta")
+    st.markdown("### 📊 Resultado da Análise")
     st.markdown(st.session_state.ultima_resposta)
