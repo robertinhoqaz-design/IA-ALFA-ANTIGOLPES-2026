@@ -9,7 +9,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilo visual moderno e limpo
+# Estilo visual futurista e limpo
 st.markdown("""
 <style>
     header[data-testid="stHeader"] {
@@ -62,107 +62,101 @@ st.markdown("""
         margin-bottom: 1.2rem;
         font-weight: 600;
     }
-    .stTextArea textarea {
-        background-color: #0b192d;
-        color: #ffffff;
-        border: 1px solid #3677b8;
-        border-radius: 12px;
-        font-size: 16px;
+    .stChatInputContainer {
+        background-color: #0b192d !important;
+        border-radius: 12px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Função para consultar a API oficial do Gemini (via Streamlit Secrets)
-def perguntar_ao_gemini(pergunta):
-    # Tenta buscar a chave de API configurada no Streamlit Cloud
+# Inicializa o histórico de mensagens da conversa na sessão
+if "mensagens" not in st.session_state:
+    st.session_state.mensagens = [
+        {"role": "assistant", "content": "Olá! Sou a **IA ALFA**, sua inteligência artificial global avançada. Como posso ajudar você hoje com consultas, análises ou perguntas gerais?"}
+    ]
+
+# Função para consultar o Gemini com suporte a histórico e raciocínio avançado
+def consultar_gemini_avancado(historico):
     api_key = st.secrets.get("GEMINI_API_KEY", "")
     
     if not api_key:
-        # Se não houver chave configurada, usa o modo inteligente de regras de golpe + fallback explicativo
-        return analisar_modo_local(pergunta)
+        return "⚠️ **Aviso:** Configure sua chave `GEMINI_API_KEY` nos segredos do Streamlit Cloud para ativar consultas avançadas ilimitadas. No momento, estou operando no modo de regras locais."
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
     headers = {"Content-Type": "application/json"}
+    
+    # Prepara o payload com todo o histórico da conversa para manter o contexto
+    contents = []
+    for m in historico:
+        role = "user" if m["role"] == "user" else "model"
+        contents.append({"role": role, "parts": [{"text": m["content"]}]})
+
     payload = {
-        "contents": [{
-            "parts": [{"text": f"Você é a IA ALFA, uma inteligência artificial global avançada, útil e polivalente. Responda à seguinte pergunta de forma clara, prestativa e em português do Brasil: {pergunta}"}]
-        }]
+        "contents": contents,
+        "system_instruction": {
+            "parts": [{"text": "Você é a IA ALFA, uma inteligência artificial global polivalente de alta performance. Responda sempre em português do Brasil de forma clara, técnica quando necessário, prestativa e amigável."}]
+        }
     }
     
     try:
-        response = requests.post(url, headers=headers, json=payload, timeout=10)
+        response = requests.post(url, headers=headers, json=payload, timeout=15)
         if response.status_code == 200:
             data = response.json()
             return data["candidates"][0]["content"]["parts"][0]["text"]
         else:
-            return "Erro ao conectar com a API do Gemini. Verifique sua chave nas configurações do Streamlit Cloud."
+            return f"Erro na API do Gemini (Código {response.status_code}): Verifique sua chave de acesso."
     except Exception as e:
-        return f"Ocorreu um erro de conexão: {str(e)}"
+        return f"Erro de conexão: {str(e)}"
 
-def analisar_modo_local(texto):
-    texto_lower = texto.lower()
-    sinais = []
-    regras = [
-        (["pix", "transferência", "transferencia", "depósito", "deposito"], "Menção a Pix, depósito ou transferência bancária."),
-        (["senha", "token", "código de segurança", "codigo de seguranca"], "Solicitação de senha, token ou código de acesso."),
-        (["prêmio", "premio", "ganhou", "sorteio", "resgate"], "Promessa de prêmio, dinheiro fácil ou sorteio."),
-        (["urgente", "imediatamente", "última chance", "bloqueio hoje"], "Pressão psicológica para você agir rapidamente sem pensar."),
-        (["conta bloqueada", "cartão bloqueado", "cancelamento"], "Ameaça de bloqueio ou cancelamento de conta/cartão."),
-        (["clique aqui", "acesse o link", "link abaixo", "http", "https"], "Incentivo para clicar em links externos suspeitos.")
-    ]
-    for palavras, descricao in regras:
-        if any(p in texto_lower for p in palavras):
-            sinais.append(descricao)
-            
-    if sinais:
-        resultado = "⚠️ ALERTA DE SEGURANÇA: Detectamos possíveis sinais de golpe! Padrões encontrados: " + ", ".join(sinais) + ". Recomendação: Não clique em links e não envie dinheiro."
-        return resultado
-    else:
-        return f"Olá! Como assistente IA ALFA, analisei sua mensagem ('{texto}') e não encontrei sinais diretos de fraude. Se esta for uma pergunta geral, lembre-se de configurar a sua chave GEMINI_API_KEY nos segredos do Streamlit Cloud para respostas livres ilimitadas sobre qualquer assunto!"
-
-# Topo limpo
+# Topo limpo com o Globo 3D
 st.markdown("""
 <div class="header-container">
     <div class="globo-3d-gigante"></div>
     <h1 class="main-title">🌐 IA ALFA MUNDO DIGITAL</h1>
-    <p class="sub-title">SISTEMA GLOBAL DE INTELIGÊNCIA E VOZ 🎙️ 🔊</p>
+    <p class="sub-title">SISTEMA GLOBAL DE CONSULTAS E VOZ AVANÇADA 🎙️ 🔊</p>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("### 💬 Pergunte ou Analise Qualquer Coisa")
+st.markdown("### 💬 Conversas e Consultas Avançadas em Tempo Real")
 
-pergunta = st.text_area(
-    "Digite sua dúvida, pergunta geral ou cole uma mensagem suspeita:",
-    placeholder="Exemplo: Explique como funciona a gravidade, ou verifique se esta mensagem é golpe...",
-    height=130
-)
+# Exibe o histórico de mensagens em formato de chat moderno
+for msg in st.session_state.mensagens:
+    with st.chat_message(msg["role"]):
+        st.write(msg["content"])
 
-if st.button("🌐 PERGUNTAR E OUVIR", type="primary", use_container_width=True):
-    if pergunta.strip():
-        with st.spinner("A IA ALFA está processando sua resposta..."):
-            resposta_ia = perguntar_ao_gemini(pergunta)
-        
-        st.markdown("---")
-        st.markdown("### 📊 Resposta da IA ALFA")
+# Entrada de chat contínua (estilo ChatGPT/Gemini)
+pergunta_usuario = st.chat_input("Digite sua consulta, pergunta ou cole uma mensagem suspeita...")
+
+if pergunta_usuario:
+    # Adiciona a pergunta do usuário ao histórico
+    st.session_state.mensagens.append({"role": "user", "content": pergunta_usuario})
+    with st.chat_message("user"):
+        st.write(pergunta_usuario)
+
+    # Processa a resposta com a IA avançada
+    with st.chat_message("assistant"):
+        with st.spinner("IA ALFA processando consulta avançada..."):
+            resposta_ia = consultar_gemini_avancado(st.session_state.mensagens)
         st.write(resposta_ia)
+        
+        # Adiciona a resposta da IA ao histórico
+        st.session_state.mensagens.append({"role": "assistant", "content": resposta_ia})
 
+        # Limpa o texto para o sintetizador de voz reproduzir corretamente
         texto_limpo = resposta_ia.replace('"', '').replace("'", "").replace('\n', ' ')
         
+        # Painel de Voz Integrado
         audio_componente = f"""
-        <div style="margin-top: 15px; padding: 18px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 12px; border: 2px solid #00b9ff; box-shadow: 0 0 20px rgba(0, 185, 255, 0.3); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 28px;">🎙️</span>
-                <span style="font-size: 28px;">🔊</span>
-                <div>
-                    <div style="color: #6bd5ff; font-weight: bold; font-size: 16px;">Voz Sintetizada Ativa</div>
-                    <div style="color: #a5d8ff; font-size: 13px;">Clique no botão para ouvir a resposta:</div>
-                </div>
+        <div style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #0b192d, #102747); border-radius: 12px; border: 2px solid #00b9ff; box-shadow: 0 0 15px rgba(0, 185, 255, 0.3); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 24px;">🎙️</span>
+                <span style="font-size: 24px;">🔊</span>
+                <div style="color: #6bd5ff; font-weight: bold; font-size: 15px;">Voz Ativa</div>
             </div>
-            <button onclick="falar()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 0 12px rgba(0, 185, 255, 0.5);">
-                🔊 OUVIR EM VOZ ALTA
+            <button onclick="falar()" style="background: linear-gradient(90deg, #00b9ff, #087bff); color: #ffffff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; box-shadow: 0 0 10px rgba(0, 185, 255, 0.5);">
+                🔊 OUVIR RESPOSTA
             </button>
         </div>
-
         <script>
             function falar() {{
                 if ('speechSynthesis' in window) {{
@@ -171,12 +165,8 @@ if st.button("🌐 PERGUNTAR E OUVIR", type="primary", use_container_width=True)
                     msg.lang = 'pt-BR';
                     msg.rate = 1.0;
                     window.speechSynthesis.speak(msg);
-                }} else {{
-                    alert('Seu navegador não suporta leitura de voz.');
                 }}
             }}
         </script>
         """
-        components.html(audio_componente, height=110)
-    else:
-        st.warning("Por favor, digite uma pergunta ou mensagem.")
+        components.html(audio_componente, height=90)
