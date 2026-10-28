@@ -1,61 +1,92 @@
 ﻿import io
-from gtts import gTTS
 import streamlit as st
 from google import genai
+from gtts import gTTS
 
 st.set_page_config(
-    page_title="Projeto Alfa - Identificador de Golpes",
-    page_icon="­ƒøí´©Å",
+    page_title="IA ALFA - Identificador de Golpes",
+    page_icon="🔎",
     layout="wide",
 )
 
-st.title("­ƒøí´©Å Projeto Alfa: Identificador de Golpes")
+st.title("IA ALFA - Identificador de Golpes")
+st.subheader("Proteção contra fraudes, phishing e golpes financeiros")
 st.write(
-    "Cole abaixo a mensagem, texto ou relato suspeito para verificar se ├®"
-    " golpe."
+    "Cole uma mensagem suspeita para receber uma análise "
+    "e orientações de segurança."
 )
 
 texto_usuario = st.text_area(
-    "Digite ou cole o texto suspeito aqui:",
-    placeholder=(
-        "Exemplo: Seu banco bloqueou sua conta. Clique neste link e informe"
-        " sua senha..."
-    ),
-    height=160,
+    "Mensagem, e-mail ou texto suspeito",
+    placeholder="Cole aqui a mensagem que você recebeu...",
+    height=180,
 )
 
-if st.button("­ƒøí´©Å ANALISAR AGORA"):
-  if not texto_usuario.strip():
-    st.warning("Por favor, insira um texto para analisar.")
-  else:
-    with st.spinner("Analisando com Intelig├¬ncia Artificial..."):
-      try:
-        client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+if st.button("ANALISAR AGORA", type="primary"):
+    if not texto_usuario.strip():
+        st.warning("Digite ou cole uma mensagem antes de analisar.")
+    else:
+        try:
+            api_key = st.secrets["GEMINI_API_KEY"]
+            client = genai.Client(api_key=api_key)
 
-        prompt_sistema = (
-            "Voc├¬ ├® o Alfa, um assistente especialista em seguran├ºa digital e"
-            " em identificar golpes financeiros, fraudes em redes sociais e"
-            " liga├º├Áes maliciosas. Analise o texto fornecido pelo usu├írio, a"
-            "ponte os riscos de golpe de forma clara e direta, e oriente o"
-            " usu├írio sobre o que fazer."
-        )
+            prompt = f"""
+Você é a IA ALFA, assistente de prevenção contra golpes digitais.
+Analise a mensagem abaixo em português brasileiro.
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=f"{prompt_sistema}\n\nTexto suspeito: {texto_usuario}",
-        )
+Apresente:
+1. Nível de atenção: baixo, moderado ou alto.
+2. Sinais suspeitos encontrados.
+3. Possíveis riscos.
+4. O que a pessoa deve fazer com segurança.
 
-        resposta = response.text
+Não afirme que uma mensagem é fraude sem evidências.
+Não abra links nem solicite senhas, códigos ou dados bancários.
+Explique que a análise é orientativa e não confirma uma fraude.
 
-        st.success("An├ílise conclu├¡da!")
-        st.markdown(resposta)
+Mensagem para analisar:
+{texto_usuario}
+"""
 
-        st.subheader("­ƒöè Ouvir Resposta")
-        tts = gTTS(text=resposta, lang="pt")
-        sound_file = io.BytesIO()
-        tts.write_to_fp(sound_file)
-        sound_file.seek(0)
-        st.audio(sound_file, format="audio/mp3")
+            with st.spinner("A IA ALFA está analisando..."):
+                resposta = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt,
+                )
 
-      except Exception as e:
-        st.error(f"Ocorreu um erro ao processar a solicita├º├úo: {e}")
+            texto_resposta = resposta.text
+
+            if texto_resposta:
+                st.success("Análise concluída!")
+                st.markdown(texto_resposta)
+
+                st.subheader("Ouvir resposta")
+                try:
+                    audio = io.BytesIO()
+                    gTTS(text=texto_resposta, lang="pt-br").write_to_fp(audio)
+                    audio.seek(0)
+                    st.audio(audio, format="audio/mp3")
+                except Exception:
+                    st.info(
+                        "Não foi possível gerar o áudio agora. "
+                        "A análise escrita continua disponível."
+                    )
+            else:
+                st.warning(
+                    "A IA não retornou uma resposta. Tente novamente."
+                )
+
+        except KeyError:
+            st.error(
+                "A chave GEMINI_API_KEY não foi encontrada nos Secrets "
+                "do Streamlit. Configure-a no painel do aplicativo."
+            )
+        except Exception as erro:
+            st.error("Não foi possível concluir a análise.")
+            st.caption(f"Detalhes técnicos: {erro}")
+
+st.divider()
+st.caption(
+    "IA ALFA Antigolpes — ferramenta de orientação. "
+    "Confirme informações pelos canais oficiais antes de agir."
+)
