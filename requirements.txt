@@ -1,3 +1,4 @@
-streamlit
+﻿streamlit
+requests
+gtts
 google-genai
-gTTS
