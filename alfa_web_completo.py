@@ -1,432 +1,921 @@
-import streamlit as st
+﻿import streamlit as st
+
 import streamlit.components.v1 as components
+
 import requests
+
 import re
+
 import html
+
 import ipaddress
+
 import json
-try:
-    import pyttsx3
-except ImportError:
-    pyttsx3 = None
 
 try:
-    from ddgs import DDGS
+
+    import pyttsx3
+
 except ImportError:
+
+    pyttsx3 = None
+
+
+
+try:
+
+    from ddgs import DDGS
+
+except ImportError:
+
     DDGS = None
 
 
+
+
+
 # =====================================
-# CONFIGURAÃ‡ÃƒO
+
+# CONFIGURAÇÃO
+
 # =====================================
+
+
 
 st.set_page_config(
+
     page_title="IA ALFA Antigolpes",
-    page_icon="ðŸ›¡ï¸",
+
+    page_icon="🛡️",
+
     layout="wide",
+
     initial_sidebar_state="collapsed"
-)
+
+ )
+
+
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
+
 MODELO_IA = "qwen2.5:0.5b"
 
 
+
+
+
 # =====================================
+
 # VISUAL NOVO
+
 # =====================================
+
+
 
 st.markdown("""
+
 <style>
+
 .stApp {
+
     background: linear-gradient(145deg, #07101e, #102747, #07101e);
+
     color: #f0f6ff;
+
 }
+
+
 
 header[data-testid="stHeader"] {
+
     background: transparent;
+
 }
+
+
 
 section.main > div.block-container {
+
     width: 96%;
+
     max-width: 1250px;
+
     padding: 1.5rem 1rem 3rem 1rem;
+
     margin: auto;
+
 }
+
+
 
 h1, h2, h3, p, label {
+
     color: #edf5ff;
+
 }
+
+
 
 .alfa-titulo {
+
     text-align: center;
+
     font-size: clamp(30px, 5vw, 48px);
+
     font-weight: 900;
+
     color: #6bd5ff;
+
     text-shadow: 0 0 16px #087bff;
+
     margin: 0;
+
 }
+
+
 
 .alfa-descricao {
+
     text-align: center;
+
     color: #b8d8ff;
+
     font-size: 16px;
+
     margin: 8px 0 20px 0;
+
 }
+
+
 
 .alfa-status {
+
     text-align: center;
+
     color: #78ffbc;
+
     font-size: 13px;
+
     margin-bottom: 15px;
+
 }
+
+
 
 .painel {
+
     background: rgba(11, 29, 53, 0.92);
+
     border: 1px solid #28578b;
+
     border-radius: 15px;
+
     padding: 18px;
+
     margin: 12px 0;
+
 }
+
+
 
 .stTextArea textarea {
+
     background: #0b192d;
+
     color: white;
+
     border: 1px solid #3677b8;
+
     border-radius: 12px;
+
     font-size: 16px;
+
 }
+
+
 
 .stButton button,
+
 .stFormSubmitButton button {
+
     width: 100%;
+
     min-height: 45px;
+
     background: linear-gradient(90deg, #087bff, #00b9ff);
+
     color: white;
+
     border: none;
+
     border-radius: 10px;
+
     font-weight: bold;
+
 }
+
+
 
 .stButton button:hover,
+
 .stFormSubmitButton button:hover {
+
     border: 1px solid #9ce7ff;
+
     color: white;
+
 }
+
+
 
 div[data-testid="stChatMessage"] {
+
     background: rgba(14, 34, 61, 0.9);
+
     border: 1px solid #244b76;
+
     border-radius: 12px;
+
 }
+
+
 
 div[data-testid="stSidebar"] {
+
     background: #081426;
+
 }
+
+
 
 hr {
+
     border-color: #294a70;
+
 }
 
+
+
 @media (max-width: 600px) {
+
     section.main > div.block-container {
+
         width: 100%;
+
         padding: 1rem 0.65rem 2rem 0.65rem;
+
     }
+
 }
+
 </style>
+
 """, unsafe_allow_html=True)
 
 
-# =====================================
-# GLOBO ANIMADO â€” MANTIDO
+
+
+
 # =====================================
 
+# GLOBO ANIMADO — MANTIDO
+
+# =====================================
+
+
+
 globo_html = """
+
 <!DOCTYPE html>
+
 <html>
+
 <head>
+
 <style>
+
 html, body {
+
     margin: 0;
+
     padding: 0;
+
     background: transparent;
+
     overflow: hidden;
+
 }
+
 .palco {
+
     height: 330px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
 }
+
 .globo {
+
     width: 245px;
+
     height: 245px;
+
     max-width: 70vw;
+
     max-height: 70vw;
+
     border-radius: 50%;
+
     position: relative;
+
     overflow: hidden;
+
     background:
+
       radial-gradient(circle at 30% 25%,
+
       #a5edff, #1689ff 23%, #0750b5 52%,
+
       #06183e 78%, #020916);
+
     box-shadow:
+
       0 0 25px #168bff,
+
       0 0 60px rgba(0, 125, 255, 0.5),
+
       inset -18px -15px 35px #020816,
+
       inset 10px 8px 22px rgba(130, 225, 255, 0.5);
+
     animation: flutuar 4s ease-in-out infinite;
+
 }
+
 .grade {
+
     position: absolute;
+
     inset: -20%;
+
     border: 1px solid rgba(120, 224, 255, 0.5);
+
     border-radius: 50%;
+
     animation: girar 12s linear infinite;
+
 }
+
 .g2 {
+
     transform: rotateY(55deg);
+
     animation: girar2 9s linear infinite;
+
 }
+
 .g3 {
+
     transform: rotateY(115deg);
+
     animation: girar 15s linear infinite reverse;
+
 }
+
 .linha {
+
     position: absolute;
+
     width: 140%;
+
     height: 1px;
+
     left: -20%;
+
     background: rgba(117, 221, 255, 0.4);
+
 }
+
 .l1 { top: 28%; }
+
 .l2 { top: 50%; }
+
 .l3 { top: 72%; }
+
 .ponto {
+
     position: absolute;
+
     width: 6px;
+
     height: 6px;
+
     background: #d5f8ff;
+
     border-radius: 50%;
+
     box-shadow: 0 0 12px #58d9ff;
+
 }
+
 .p1 { top: 24%; left: 35%; }
+
 .p2 { top: 43%; left: 72%; }
+
 .p3 { top: 65%; left: 30%; }
+
 .p4 { top: 73%; left: 61%; }
+
 .p5 { top: 35%; left: 48%; }
+
 @keyframes girar {
+
     from { transform: rotate(0deg); }
+
     to { transform: rotate(360deg); }
+
 }
+
 @keyframes girar2 {
+
     from { transform: rotateY(55deg) rotate(0deg); }
+
     to { transform: rotateY(55deg) rotate(360deg); }
+
 }
+
 @keyframes flutuar {
+
     0%, 100% { translate: 0 0; }
+
     50% { translate: 0 -8px; }
+
 }
+
 </style>
+
 </head>
+
 <body>
+
 <div class="palco">
+
   <div class="globo">
+
     <div class="grade"></div>
+
     <div class="grade g2"></div>
+
     <div class="grade g3"></div>
+
     <div class="linha l1"></div>
+
     <div class="linha l2"></div>
+
     <div class="linha l3"></div>
+
     <div class="ponto p1"></div>
+
     <div class="ponto p2"></div>
+
     <div class="ponto p3"></div>
+
     <div class="ponto p4"></div>
+
     <div class="ponto p5"></div>
+
   </div>
+
 </div>
+
 </body>
+
 </html>
+
 """
 
 
+
+
+
 # =====================================
+
 # REGRAS ANTIGOLPES
+
 # =====================================
+
+
 
 def analisar_golpe(texto):
+
     texto = texto.lower()
+
     sinais = []
 
+
+
     regras = [
+
         (
-            ["pix", "transferÃªncia", "transferencia", "depÃ³sito",
+
+            ["pix", "transferência", "transferencia", "depósito",
+
              "deposito"],
-            "MenÃ§Ã£o a Pix, depÃ³sito ou transferÃªncia."
+
+            "Menção a Pix, depósito ou transferência."
+
         ),
+
         (
-            ["senha", "token", "cÃ³digo de seguranÃ§a",
-             "codigo de seguranca", "cÃ³digo de acesso"],
-            "MenÃ§Ã£o a senha ou cÃ³digo de seguranÃ§a."
+
+            ["senha", "token", "código de segurança",
+
+             "codigo de seguranca", "código de acesso"],
+
+            "Menção a senha ou código de segurança."
+
         ),
+
         (
-            ["prÃªmio", "premio", "ganhou", "sorteio",
-             "dinheiro grÃ¡tis", "dinheiro gratis"],
-            "PossÃ­vel promessa de prÃªmio ou dinheiro."
+
+            ["prêmio", "premio", "ganhou", "sorteio",
+
+             "dinheiro grátis", "dinheiro gratis"],
+
+            "Possível promessa de prêmio ou dinheiro."
+
         ),
+
         (
-            ["urgente", "imediatamente", "Ãºltima chance",
+
+            ["urgente", "imediatamente", "última chance",
+
              "ultima chance", "agora mesmo"],
-            "PressÃ£o para agir rapidamente."
+
+            "Pressão para agir rapidamente."
+
         ),
+
         (
-            ["conta bloqueada", "cartÃ£o bloqueado",
+
+            ["conta bloqueada", "cartão bloqueado",
+
              "cartao bloqueado", "conta suspensa"],
-            "PossÃ­vel ameaÃ§a de bloqueio de conta ou cartÃ£o."
+
+            "Possível ameaça de bloqueio de conta ou cartão."
+
         ),
+
         (
+
             ["clique aqui", "acesse o link", "confirme seus dados"],
+
             "Pedido para clicar em link ou confirmar dados."
+
         ),
+
         (
+
             ["taxa para liberar", "pague a taxa",
-             "taxa antecipada", "taxa de liberaÃ§Ã£o"],
-            "PossÃ­vel cobranÃ§a antecipada."
+
+             "taxa antecipada", "taxa de liberação"],
+
+            "Possível cobrança antecipada."
+
         ),
+
         (
-            ["cpf", "dados bancÃ¡rios", "dados bancarios",
-             "nÃºmero do cartÃ£o", "numero do cartao"],
-            "MenÃ§Ã£o a dados pessoais ou bancÃ¡rios."
+
+            ["cpf", "dados bancários", "dados bancarios",
+
+             "número do cartão", "numero do cartao"],
+
+            "Menção a dados pessoais ou bancários."
+
         ),
+
         (
+
             ["anydesk", "teamviewer", "acesso remoto"],
+
             "Pedido de acesso remoto ao computador ou celular."
+
         )
+
     ]
 
+
+
     for palavras, descricao in regras:
+
         if any(p in texto for p in palavras):
+
             sinais.append(descricao)
 
+
+
     if re.search(r"https?://|www\.", texto):
+
         sinais.append(
-            "Existe um endereÃ§o de internet. Verifique o domÃ­nio antes de abrir."
+
+            "Existe um endereço de internet. Verifique o domínio antes de abrir."
+
         )
 
+
+
     if not sinais:
+
         sinais.append(
-            "Nenhum sinal conhecido foi identificado pelas regras bÃ¡sicas. "
-            "Isso nÃ£o garante que a mensagem seja segura."
+
+            "Nenhum sinal conhecido foi identificado pelas regras básicas. "
+
+            "Isso não garante que a mensagem seja segura."
+
         )
+
+
 
     return sinais
 
+
+
 # =====================================
-# PROTEÃ‡ÃƒO DE CRIANÃ‡AS E ADOLESCENTES
+
+# PROTEÇÃO DE CRIANÇAS E ADOLESCENTES
+
+# =====================================
+
+
+
+def analisar_sinais_protecao(texto):
+
+    texto = texto.lower()
+
+    sinais = []
+
+
+
+    regras_protecao = [
+
+        (
+
+            [
+
+                "não conte para seus pais",
+
+                "nao conte para seus pais",
+
+                "mantenha em segredo",
+
+                "isso fica entre nós",
+
+                "isso fica entre nos"
+
+            ],
+
+            "Possível tentativa de impor segredo a uma criança."
+
+        ),
+
+        (
+
+            [
+
+                "mande uma foto íntima",
+
+                "mande uma foto intima",
+
+                "envie fotos sem roupa",
+
+                "foto sem roupa",
+
+                "mostre seu corpo"
+
+            ],
+
+            "Possível solicitação de imagem íntima."
+
+        ),
+
+        (
+
+            [
+
+                "encontro escondido",
+
+                "não avise seus pais",
+
+                "nao avise seus pais",
+
+                "venha sozinho",
+
+                "venha sozinha"
+
+            ],
+
+            "Possível tentativa de marcar encontro escondido."
+
+        ),
+
+        (
+
+            [
+
+                "vou te dar presentes",
+
+                "te dou dinheiro",
+
+                "compro presentes",
+
+                "não precisa contar",
+
+                "nao precisa contar"
+
+            ],
+
+            "Possível tentativa de ganhar confiança oferecendo vantagens."
+
+        ),
+
+        (
+
+            [
+
+                "qual sua idade",
+
+                "onde você mora",
+
+                "onde voce mora",
+
+                "está sozinho",
+
+                "esta sozinho"
+
+            ],
+
+            "Pergunta pessoal que pode exigir atenção de um responsável."
+
+        )
+
+    ]
+
+
+
+    for palavras, descricao in regras_protecao:
+
+        if any(p in texto for p in palavras):
+
+            sinais.append(descricao)
+
+
+
+    return sinais
+    # =====================================
+# PROTEÇÃO DE CRIANÇAS E ADOLESCENTES
 # =====================================
 
 def analisar_sinais_protecao(texto):
+
     texto = texto.lower()
+
     sinais = []
 
     regras_protecao = [
+
         (
             [
-                "nÃ£o conte para seus pais",
+                "não conte para seus pais",
                 "nao conte para seus pais",
                 "mantenha em segredo",
-                "isso fica entre nÃ³s",
+                "isso fica entre nós",
                 "isso fica entre nos"
             ],
-            "PossÃ­vel tentativa de impor segredo a uma crianÃ§a."
+
+            "Possível tentativa de impor segredo a uma criança."
         ),
+
         (
             [
-                "mande uma foto Ã­ntima",
+                "mande uma foto íntima",
                 "mande uma foto intima",
                 "envie fotos sem roupa",
                 "foto sem roupa",
                 "mostre seu corpo"
             ],
-            "PossÃ­vel solicitaÃ§Ã£o de imagem Ã­ntima."
+
+            "Possível solicitação de imagem íntima."
         ),
+
         (
             [
                 "encontro escondido",
-                "nÃ£o avise seus pais",
+                "não avise seus pais",
                 "nao avise seus pais",
                 "venha sozinho",
                 "venha sozinha"
             ],
-            "PossÃ­vel tentativa de marcar encontro escondido."
+
+            "Possível tentativa de marcar encontro escondido."
         ),
+
         (
             [
                 "vou te dar presentes",
                 "te dou dinheiro se",
                 "em troca de fotos",
-                "comprei crÃ©ditos para vocÃª",
+                "comprei créditos para você",
                 "comprei creditos para voce"
             ],
-            "PossÃ­vel oferta de dinheiro ou presentes em contexto suspeito."
+
+            "Possível oferta de dinheiro ou presentes em contexto suspeito."
         ),
+
         (
             [
                 "apague nossa conversa",
                 "apaga as mensagens",
-                "nÃ£o mostre esta conversa",
+                "não mostre esta conversa",
                 "nao mostre esta conversa"
             ],
-            "PossÃ­vel tentativa de ocultar a conversa."
+
+            "Possível tentativa de ocultar a conversa."
         ),
+
         (
             [
                 "sou adulto, mas",
                 "qual sua idade",
-                "quantos anos vocÃª tem",
+                "quantos anos você tem",
                 "quantos anos voce tem"
             ],
-            "Pergunta sobre idade ou diferenÃ§a de idade: avaliar o contexto."
+
+            "Pergunta sobre idade ou diferença de idade: avaliar o contexto."
         )
+
     ]
 
     for palavras, descricao in regras_protecao:
+
         if any(palavra in texto for palavra in palavras):
+
             sinais.append(descricao)
 
     if sinais:
-        nivel = "ATENÃ‡ÃƒO: revisar os indÃ­cios"
+
+        nivel = "ATENÇÃO: revisar os indícios"
+
     else:
+
         nivel = "Nenhum sinal previsto nas regras foi encontrado"
 
     return nivel, sinais
 
 
 # =====================================
-# PESQUISA PÃšBLICA
+# PESQUISA PÚBLICA
 # =====================================
 
 def pesquisar_internet(consulta):
+
     fontes = []
 
     if DDGS is None:
+
         return fontes
 
     try:
+
         with DDGS() as busca:
+
             resultados = busca.text(
+
                 consulta + " golpe fraude Brasil",
+
                 region="br-pt",
+
                 max_results=5
+
             )
 
             for item in resultados:
+
                 fontes.append({
+
                     "titulo": item.get("title", "Resultado"),
+
                     "url": item.get("href", ""),
+
                     "resumo": item.get("body", "")
+
                 })
+
     except Exception:
+
         pass
 
     return fontes
@@ -437,47 +926,79 @@ def pesquisar_internet(consulta):
 # =====================================
 
 def consultar_ia(pergunta, sinais, fontes):
+
     contexto_fontes = ""
 
     for fonte in fontes:
+
         contexto_fontes += (
-            "\nTÃ­tulo: " + fonte["titulo"] +
+
+            "\nTítulo: " + fonte["titulo"] +
+
             "\nResumo: " + fonte["resumo"] +
-            "\nEndereÃ§o: " + fonte["url"] + "\n"
+
+            "\nEndereço: " + fonte["url"] + "\n"
+
         )
 
     contexto_sinais = "\n".join("- " + s for s in sinais)
 
     mensagens = [
+
         {
+
             "role": "system",
+
             "content": (
-                "VocÃª Ã© a IA ALFA, especialista em prevenÃ§Ã£o de golpes "
-                "digitais. Responda em portuguÃªs brasileiro, de forma clara "
-                "e simples. NÃ£o afirme que existe fraude sem provas. "
-                "Explique os riscos e recomende confirmar solicitaÃ§Ãµes "
-                "por canais oficiais. Nunca solicite senhas ou cÃ³digos.\n\n"
+
+                "Você é a IA ALFA, especialista em prevenção de golpes "
+
+                "digitais. Responda em português brasileiro, de forma clara "
+
+                "e simples. Não afirme que existe fraude sem provas. "
+
+                "Explique os riscos e recomende confirmar solicitações "
+
+                "por canais oficiais. Nunca solicite senhas ou códigos.\n\n"
+
                 "Sinais encontrados:\n" + contexto_sinais +
-                "\n\nResultados pÃºblicos disponÃ­veis:\n" + contexto_fontes
+
+                "\n\nResultados públicos disponíveis:\n" + contexto_fontes
+
             )
+
         },
+
         {
+
             "role": "user",
+
             "content": pergunta
+
         }
+
     ]
 
     resposta = requests.post(
+
         OLLAMA_URL,
+
         json={
+
             "model": MODELO_IA,
+
             "messages": mensagens,
+
             "stream": False
+
         },
+
         timeout=120
+
     )
 
     resposta.raise_for_status()
+
     return resposta.json()["message"]["content"]
 
 
@@ -486,149 +1007,232 @@ def consultar_ia(pergunta, sinais, fontes):
 # =====================================
 
 def ler_resposta(texto):
+
     if pyttsx3 is None:
-        return False, "A biblioteca pyttsx3 nÃ£o estÃ¡ instalada."
+
+        return False, "A biblioteca pyttsx3 não está instalada."
 
     try:
+
         motor = pyttsx3.init()
+
         motor.setProperty("rate", 175)
+
         motor.say(texto[:2000])
+
         motor.runAndWait()
+
         motor.stop()
+
         return True, ""
+
     except Exception as erro:
+
         return False, str(erro)
 
 
 # =====================================
-# MEMÃ“RIA DA PÃGINA
+# MEMÓRIA DA PÁGINA
 # =====================================
 
 if "historico_alfa" not in st.session_state:
+
     st.session_state.historico_alfa = []
 
 if "ultima_resposta" not in st.session_state:
+
     st.session_state.ultima_resposta = ""
 
 if "ultima_fonte" not in st.session_state:
+
     st.session_state.ultima_fonte = []
 
 
-
 # =====================================
-# CABEÃ‡ALHO
+# CABEÇALHO
 # =====================================
 
 st.markdown(
+
     '<div class="alfa-titulo">IA ALFA</div>',
+
     unsafe_allow_html=True
+
 )
 
 st.markdown(
+
     '<div class="alfa-descricao">'
-    'ANTIGOLPES â€¢ ASSISTENTE DE SEGURANÃ‡A DIGITAL'
+
+    'ANTIGOLPES • ASSISTENTE DE SEGURANÇA DIGITAL'
+
     '</div>',
+
     unsafe_allow_html=True
+
 )
 
 st.markdown(
-    '<div class="alfa-status">â— CENTRAL DE ANÃLISE</div>',
+
+    '<div class="alfa-status">● CENTRAL DE ANÁLISE</div>',
+
     unsafe_allow_html=True
+
 )
 
 components.html(globo_html, height=335, scrolling=False)
 
 
 # =====================================
-# CONFIGURAÃ‡Ã•ES
+# CONFIGURAÇÕES
 # =====================================
 
-with st.expander("âš™ï¸ ConfiguraÃ§Ãµes de voz"):
+with st.expander("⚙️ Configurações de voz"):
+
     st.write("Use o botão de voz abaixo para ouvir a resposta pelo navegador.")
 
-st.markdown("### ðŸ”Ž Analisar mensagem")
+st.markdown("### 🔎 Analisar mensagem")
 
 st.write(
+
     "Cole abaixo um texto suspeito, mensagem de WhatsApp ou e-mail. "
-    "NÃ£o inclua senhas nem cÃ³digos pessoais."
+
+    "Não inclua senhas nem códigos pessoais."
+
 )
 
 
 # =====================================
-# CAMPO DE ANÃLISE
+# CAMPO DE ANÁLISE
 # =====================================
 
 with st.form("formulario_analise"):
+
     pergunta = st.text_area(
+
         "Mensagem ou pergunta",
+
         placeholder=(
+
             "Exemplo: Seu banco bloqueou sua conta. "
+
             "Clique neste link e informe sua senha..."
+
         ),
+
         height=160
+
     )
 
-    enviar = st.form_submit_button("ðŸ›¡ï¸ ANALISAR AGORA")
+    enviar = st.form_submit_button("🛡️ ANALISAR AGORA")
 
 
 if enviar:
+
     pergunta = pergunta.strip()
 
     if not pergunta:
+
         st.warning("Digite uma mensagem antes de analisar.")
+
     else:
+
         sinais = analisar_golpe(pergunta)
+
         nivel_protecao, sinais_protecao = analisar_sinais_protecao(pergunta)
+
         with st.spinner("Analisando a mensagem..."):
+
             fontes = pesquisar_internet(pergunta)
 
             try:
+
                 resposta = consultar_ia(pergunta, sinais, fontes)
+
             except requests.exceptions.ConnectionError:
+
                 resposta = (
-                    "NÃ£o consegui conectar Ã  IA local.\n\n"
-                    "Verifique se o Ollama estÃ¡ aberto e se o modelo "
-                    "qwen2.5:0.5b estÃ¡ instalado. Os sinais bÃ¡sicos "
-                    "continuam disponÃ­veis abaixo."
+
+                    "Não consegui conectar à IA local.\n\n"
+
+                    "Verifique se o Ollama está aberto e se o modelo "
+
+                    "qwen2.5:0.5b está instalado. Os sinais básicos "
+
+                    "continuam disponíveis abaixo."
+
                 )
+
             except requests.exceptions.Timeout:
+
                 resposta = (
+
                     "A IA demorou para responder. Tente novamente. "
+
                     "O computador pode estar ocupado."
+
                 )
+
             except Exception as erro:
+
                 resposta = (
-                    "NÃ£o foi possÃ­vel consultar a IA local. "
-                    "Confira se o Ollama estÃ¡ funcionando.\n\n"
+
+                    "Não foi possível consultar a IA local. "
+
+                    "Confira se o Ollama está funcionando.\n\n"
+
                     "Detalhe: " + str(erro)[:250]
+
                 )
 
         resposta_completa = (
+
             resposta
+
             + "\n\n---\n\n"
+
             + "### Sinais encontrados\n"
+
             + "\n".join("- " + sinal for sinal in sinais)
-            + "\n\n**AtenÃ§Ã£o:** esta anÃ¡lise nÃ£o comprova fraude. "
-              "Confirme informaÃ§Ãµes importantes por um canal oficial."
+
+            + "\n\n**Atenção:** esta análise não comprova fraude. "
+
+              "Confirme informações importantes por um canal oficial."
+
         )
+
         resposta_completa += (
+
             "\n\n---\n\n"
-            "### ðŸ›¡ï¸ ProteÃ§Ã£o de crianÃ§as e adolescentes\n\n"
+
+            "### 🛡️ Proteção de crianças e adolescentes\n\n"
+
             + nivel_protecao
+
         )
 
         if sinais_protecao:
+
             resposta_completa += (
+
                 "\n\n" +
+
                 "\n".join("- " + sinal for sinal in sinais_protecao)
+
             )
+
         st.session_state.historico_alfa.append({
+
             "pergunta": pergunta,
+
             "resposta": resposta_completa,
+
             "fontes": fontes
+
         })
 
         st.session_state.ultima_resposta = resposta_completa
+
         st.session_state.ultima_fonte = fontes
 
         st.rerun()
@@ -639,92 +1243,153 @@ if enviar:
 # =====================================
 
 if st.session_state.ultima_resposta:
+
     st.markdown("---")
-    st.markdown("### ðŸ”Š Resultado da análise")
+
+    st.markdown("### 🔊 Resultado da análise")
+
     st.markdown(st.session_state.ultima_resposta)
 
-    st.markdown("### ðŸ”Š Ouvir resposta")
+    st.markdown("### 🔊 Ouvir resposta")
+
     texto_para_voz = json.dumps(
+
         st.session_state.ultima_resposta,
+
         ensure_ascii=False
-    )
-    components.html(
-        f"""
-        <button id="botao_voz_alfa"
-            style="padding:12px 18px;border:0;border-radius:10px;
-                   background:linear-gradient(90deg,#087bff,#00b9ff);
-                   color:white;font-weight:bold;cursor:pointer;width:100%;">
-            🔊 Ouvir resposta da IA ALFA
-        </button>
-        <script>
-        const textoAlfa = {texto_para_voz};
-        const botaoAlfa = document.getElementById("botao_voz_alfa");
-        botaoAlfa.addEventListener("click", function() {{
-            if (!("speechSynthesis" in window)) {{
-                alert("A voz não está disponível neste navegador.");
-                return;
-            }}
-            window.speechSynthesis.cancel();
-            const fala = new SpeechSynthesisUtterance(textoAlfa);
-            fala.lang = "pt-BR";
-            fala.rate = 0.95;
-            window.speechSynthesis.speak(fala);
-        }});
-        </script>
-        """,
-        height=65,
-        scrolling=False
+
     )
 
-    if st.button("ðŸŒ Ver fontes da Ãºltima pesquisa"):
+    components.html(
+
+        f"""
+
+        <button id="botao_voz_alfa"
+
+            style="padding:12px 18px;border:0;border-radius:10px;
+
+                   background:linear-gradient(90deg,#087bff,#00b9ff);
+
+                   color:white;font-weight:bold;cursor:pointer;width:100%;">
+
+            🔊 Ouvir resposta da IA ALFA
+
+        </button>
+
+        <script>
+
+        const textoAlfa = {texto_para_voz};
+
+        const botaoAlfa = document.getElementById("botao_voz_alfa");
+
+        botaoAlfa.addEventListener("click", function() {{
+
+            if (!("speechSynthesis" in window)) {{
+
+                alert("A voz não está disponível neste navegador.");
+
+                return;
+
+            }}
+
+            window.speechSynthesis.cancel();
+
+            const fala = new SpeechSynthesisUtterance(textoAlfa);
+
+            fala.lang = "pt-BR";
+
+            fala.rate = 0.95;
+
+            window.speechSynthesis.speak(fala);
+
+        }});
+
+        </script>
+
+        """,
+
+        height=65,
+
+        scrolling=False
+
+    )
+
+    if st.button("🌐 Ver fontes da última pesquisa"):
+
         if st.session_state.ultima_fonte:
+
             for fonte in st.session_state.ultima_fonte:
+
                 st.markdown("**" + fonte["titulo"] + "**")
 
                 url = fonte["url"]
+
                 if url.startswith(("https://", "http://")):
+
                     st.markdown(f"[Abrir resultado]({url})")
 
                 st.write(fonte["resumo"])
+
         else:
+
             st.info(
+
                 "Nenhuma fonte foi encontrada. "
-                "Verifique se a biblioteca ddgs estÃ¡ instalada."
+
+                "Verifique se a biblioteca ddgs está instalada."
+
             )
 
 
 # =====================================
-# HISTÃ“RICO
+# HISTÓRICO
 # =====================================
 
 st.markdown("---")
-st.markdown("### ðŸ“‹ HistÃ³rico das anÃ¡lises")
+
+st.markdown("### 📋 Histórico das análises")
 
 if st.session_state.historico_alfa:
+
     for item in reversed(st.session_state.historico_alfa):
-        with st.expander("AnÃ¡lise: " + item["pergunta"][:65]):
+
+        with st.expander("Análise: " + item["pergunta"][:65]):
+
             st.markdown(item["resposta"])
 
             if item["fontes"]:
-                st.markdown("**Fontes pÃºblicas:**")
+
+                st.markdown("**Fontes públicas:**")
+
                 for fonte in item["fontes"]:
+
                     url = fonte["url"]
+
                     titulo = html.escape(fonte["titulo"])
 
                     if url.startswith(("https://", "http://")):
+
                         st.markdown(f"[{titulo}]({url})")
+
                     else:
+
                         st.write(fonte["titulo"])
+
 else:
-    st.info("Suas anÃ¡lises aparecerÃ£o aqui.")
+
+    st.info("Suas análises aparecerão aqui.")
 
 
 # =====================================
-# RODAPÃ‰
+# RODAPÉ
 # =====================================
 
 st.markdown("---")
+
 st.caption(
-    "IA ALFA ANTIGOLPES â€¢ Ferramenta de apoio Ã  prevenÃ§Ã£o. "
+
+    "IA ALFA ANTIGOLPES • Ferramenta de apoio à prevenção. "
+
     "Resultados podem estar incompletos; confirme em fontes oficiais."
+
 )
