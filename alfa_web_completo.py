@@ -4,6 +4,8 @@ import streamlit.components.v1 as components
 
 import requests
 
+from openai import OpenAI
+
 import re
 
 import html
