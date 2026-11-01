@@ -1,5 +1,7 @@
 ﻿import streamlit as st
 
+import os
+
 import streamlit.components.v1 as components
 
 import requests
@@ -926,77 +928,65 @@ def pesquisar_internet(consulta):
 # =====================================
 # CONSULTAR A IA LOCAL
 # =====================================
-
 def consultar_ia(pergunta, sinais, fontes):
 
     contexto_fontes = ""
 
     for fonte in fontes:
-
         contexto_fontes += (
-
             "\nTítulo: " + fonte["titulo"] +
-
             "\nResumo: " + fonte["resumo"] +
-
             "\nEndereço: " + fonte["url"] + "\n"
-
         )
 
     contexto_sinais = "\n".join("- " + s for s in sinais)
 
     mensagens = [
-
         {
-
             "role": "system",
-
             "content": (
-
-                "Você é a IA ALFA, especialista em prevenção de golpes "
-
-                "digitais. Responda em português brasileiro, de forma clara "
-
-                "e simples. Não afirme que existe fraude sem provas. "
-
-                "Explique os riscos e recomende confirmar solicitações "
-
-                "por canais oficiais. Nunca solicite senhas ou códigos.\n\n"
-
+                "Você é a IA ALFA, especialista em prevenção de golpes digitais. "
+                "Responda em português brasileiro, com clareza e simplicidade. "
+                "Ajude também com perguntas gerais. Não invente informações. "
+                "Não afirme fraude sem provas. Nunca solicite senhas ou códigos.\n\n"
                 "Sinais encontrados:\n" + contexto_sinais +
-
                 "\n\nResultados públicos disponíveis:\n" + contexto_fontes
-
             )
-
         },
-
         {
-
             "role": "user",
-
             "content": pergunta
-
         }
-
     ]
 
+    usar_gpt = os.getenv("IA_ALFA_GPT") == "1"
+
+    try:
+        usar_gpt = usar_gpt or str(st.secrets.get("IA_ALFA_GPT", "0")) == "1"
+    except Exception:
+        pass
+
+    if usar_gpt:
+        cliente = OpenAI(
+            api_key=st.secrets["openai"]["api_key"]
+        )
+
+        resposta = cliente.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=mensagens,
+            timeout=120
+        )
+
+        return resposta.choices[0].message.content
+
     resposta = requests.post(
-
         OLLAMA_URL,
-
         json={
-
             "model": MODELO_IA,
-
             "messages": mensagens,
-
             "stream": False
-
         },
-
         timeout=120
-
     )
 
     resposta.raise_for_status()
