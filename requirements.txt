@@ -1,5 +1,6 @@
-﻿streamlit
+streamlit
 requests
 gtts
 google-genai
 openai
+mercadopago
