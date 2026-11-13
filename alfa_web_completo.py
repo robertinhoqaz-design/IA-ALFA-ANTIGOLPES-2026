@@ -40,7 +40,7 @@ except ImportError:
 
 # =====================================
 
-# CONFIGURAÇÃO
+# CONFIGURACAO
 
 # =====================================
 
@@ -50,7 +50,7 @@ st.set_page_config(
 
     page_title="IA ALFA Antigolpes",
 
-    page_icon="🛡️",
+   page_icon="🛡️",
 
     layout="wide",
 
@@ -282,7 +282,7 @@ hr {
 
 # =====================================
 
-# GLOBO ANIMADO — MANTIDO
+ # GLOBO ANIMADO  MANTIDO
 
 # =====================================
 
@@ -526,51 +526,51 @@ def analisar_golpe(texto):
 
         (
 
-            ["pix", "transferência", "transferencia", "depósito",
+            ["pix", "transferencia", "transferencia", "deposito",
 
              "deposito"],
 
-            "Menção a Pix, depósito ou transferência."
+            "Menssao a Pix, deposito ou transferencia."
 
         ),
 
         (
 
-            ["senha", "token", "código de segurança",
+            ["senha", "token", "codigo de seguransa",
 
-             "codigo de seguranca", "código de acesso"],
+             "codigo de seguranca", "codigo de acesso"],
 
-            "Menção a senha ou código de segurança."
-
-        ),
-
-        (
-
-            ["prêmio", "premio", "ganhou", "sorteio",
-
-             "dinheiro grátis", "dinheiro gratis"],
-
-            "Possível promessa de prêmio ou dinheiro."
+            "Menssao a senha ou codigo de seguransa."
 
         ),
 
         (
 
-            ["urgente", "imediatamente", "última chance",
+            ["premio", "premio", "ganhou", "sorteio",
+
+             "dinheiro gratis", "dinheiro gratis"],
+
+            "Possivel promessa de premio ou dinheiro."
+
+        ),
+
+        (
+
+            ["urgente", "imediatamente", "ultima chance",
 
              "ultima chance", "agora mesmo"],
 
-            "Pressão para agir rapidamente."
+            "Pressao para agir rapidamente."
 
         ),
 
         (
 
-            ["conta bloqueada", "cartão bloqueado",
+            ["conta bloqueada", "cartao bloqueado",
 
              "cartao bloqueado", "conta suspensa"],
 
-            "Possível ameaça de bloqueio de conta ou cartão."
+            "Possivel ameassa de bloqueio de conta ou cartao."
 
         ),
 
@@ -586,19 +586,19 @@ def analisar_golpe(texto):
 
             ["taxa para liberar", "pague a taxa",
 
-             "taxa antecipada", "taxa de liberação"],
+             "taxa antecipada", "taxa de liberasso"],
 
-            "Possível cobrança antecipada."
+            "Possivel cobranca antecipada."
 
         ),
 
         (
 
-            ["cpf", "dados bancários", "dados bancarios",
+            ["cpf", "dados bancarios", "dados bancarios",
 
-             "número do cartão", "numero do cartao"],
+             "numero do cartao", "numero do cartao"],
 
-            "Menção a dados pessoais ou bancários."
+            "Mensao a dados pessoais ou bancarios."
 
         ),
 
@@ -626,7 +626,7 @@ def analisar_golpe(texto):
 
         sinais.append(
 
-            "Existe um endereço de internet. Verifique o domínio antes de abrir."
+            "Existe um endereco de internet. Verifique o dominio antes de abrir."
 
         )
 
@@ -636,9 +636,9 @@ def analisar_golpe(texto):
 
         sinais.append(
 
-            "Nenhum sinal conhecido foi identificado pelas regras básicas. "
+            "Nenhum sinal conhecido foi identificado pelas regras basicas. "
 
-            "Isso não garante que a mensagem seja segura."
+            "Isso nao garante que a mensagem seja segura."
 
         )
 
@@ -650,7 +650,7 @@ def analisar_golpe(texto):
 
 # =====================================
 
-# PROTEÇÃO DE CRIANÇAS E ADOLESCENTES
+# PROTECAO DE CRIANCAS E ADOLESCENTES
 
 # =====================================
 
@@ -670,19 +670,19 @@ def analisar_sinais_protecao(texto):
 
             [
 
-                "não conte para seus pais",
+                "nao conte para seus pais",
 
                 "nao conte para seus pais",
 
                 "mantenha em segredo",
 
-                "isso fica entre nós",
+                "isso fica entre nas",
 
                 "isso fica entre nos"
 
             ],
 
-            "Possível tentativa de impor segredo a uma criança."
+            "Possivel tentativa de impor segredo a uma crianca."
 
         ),
 
@@ -690,7 +690,7 @@ def analisar_sinais_protecao(texto):
 
             [
 
-                "mande uma foto íntima",
+                "mande uma foto intima",
 
                 "mande uma foto intima",
 
@@ -702,7 +702,7 @@ def analisar_sinais_protecao(texto):
 
             ],
 
-            "Possível solicitação de imagem íntima."
+            "Possivel solicitacao de imagem intima."
 
         ),
 
@@ -712,7 +712,7 @@ def analisar_sinais_protecao(texto):
 
                 "encontro escondido",
 
-                "não avise seus pais",
+                "nao avise seus pais",
 
                 "nao avise seus pais",
 
@@ -722,7 +722,7 @@ def analisar_sinais_protecao(texto):
 
             ],
 
-            "Possível tentativa de marcar encontro escondido."
+            "Possivel tentativa de marcar encontro escondido."
 
         ),
 
@@ -736,13 +736,13 @@ def analisar_sinais_protecao(texto):
 
                 "compro presentes",
 
-                "não precisa contar",
+                "nao precisa contar",
 
                 "nao precisa contar"
 
             ],
 
-            "Possível tentativa de ganhar confiança oferecendo vantagens."
+            "Possivel tentativa de ganhar confianca oferecendo vantagens."
 
         ),
 
@@ -752,17 +752,14 @@ def analisar_sinais_protecao(texto):
 
                 "qual sua idade",
 
-                "onde você mora",
-
                 "onde voce mora",
+                
+                "esta sozinho",
 
-                "está sozinho",
-
-                "esta sozinho"
-
+                 
             ],
 
-            "Pergunta pessoal que pode exigir atenção de um responsável."
+            "Pergunta pessoal que pode exigir atencao de um responsavel."
 
         )
 
@@ -780,8 +777,8 @@ def analisar_sinais_protecao(texto):
 
     return sinais
     # =====================================
-# PROTEÇÃO DE CRIANÇAS E ADOLESCENTES
-# =====================================
+    # PROTECAO DE CRIANCAS E ADOLESCENTES
+    # =====================================
 
 def analisar_sinais_protecao(texto):
 
@@ -793,38 +790,38 @@ def analisar_sinais_protecao(texto):
 
         (
             [
-                "não conte para seus pais",
+                "nao conte para seus pais",
                 "nao conte para seus pais",
                 "mantenha em segredo",
-                "isso fica entre nós",
+                "isso fica entre nas",
                 "isso fica entre nos"
             ],
 
-            "Possível tentativa de impor segredo a uma criança."
+            "Possivel tentativa de impor segredo a uma criancas."
         ),
 
         (
             [
-                "mande uma foto íntima",
+                "mande uma foto intima",
                 "mande uma foto intima",
                 "envie fotos sem roupa",
                 "foto sem roupa",
                 "mostre seu corpo"
             ],
 
-            "Possível solicitação de imagem íntima."
+            "Possivel solicitacao de imagem intima."
         ),
 
         (
             [
                 "encontro escondido",
-                "não avise seus pais",
+                "nao avise seus pais",
                 "nao avise seus pais",
                 "venha sozinho",
-                "venha sozinha"
+                 
             ],
 
-            "Possível tentativa de marcar encontro escondido."
+            "Possivel tentativa de marcar encontro escondido."
         ),
 
         (
@@ -832,33 +829,33 @@ def analisar_sinais_protecao(texto):
                 "vou te dar presentes",
                 "te dou dinheiro se",
                 "em troca de fotos",
-                "comprei créditos para você",
-                "comprei creditos para voce"
+                 "comprei creditos para voce",
+                 
             ],
 
-            "Possível oferta de dinheiro ou presentes em contexto suspeito."
+            "Possivel oferta de dinheiro ou presentes em contexto suspeito."
         ),
 
         (
             [
                 "apague nossa conversa",
                 "apaga as mensagens",
-                "não mostre esta conversa",
-                "nao mostre esta conversa"
+                "nao mostre esta conversa",
+                 
             ],
 
-            "Possível tentativa de ocultar a conversa."
+            "Possivel tentativa de ocultar a conversa."
         ),
 
         (
             [
                 "sou adulto, mas",
                 "qual sua idade",
-                "quantos anos você tem",
-                "quantos anos voce tem"
+                "quantos anos voce tem",
+                 
             ],
 
-            "Pergunta sobre idade ou diferença de idade: avaliar o contexto."
+            "Pergunta sobre idade ou diferensa de idade: avaliar o contexto."
         )
 
     ]
@@ -871,7 +868,7 @@ def analisar_sinais_protecao(texto):
 
     if sinais:
 
-        nivel = "ATENÇÃO: revisar os indícios"
+        nivel = "ATENCAO: revisar os indicios"
 
     else:
 
@@ -881,7 +878,7 @@ def analisar_sinais_protecao(texto):
 
 
 # =====================================
-# PESQUISA PÚBLICA
+# PESQUISA BIBLICA
 # =====================================
 
 def pesquisar_internet(consulta):
@@ -934,9 +931,9 @@ def consultar_ia(pergunta, sinais, fontes):
 
     for fonte in fontes:
         contexto_fontes += (
-            "\nTítulo: " + fonte["titulo"] +
+            "\ntitulo: " + fonte["titulo"] +
             "\nResumo: " + fonte["resumo"] +
-            "\nEndereço: " + fonte["url"] + "\n"
+            "\nEndereso: " + fonte["url"] + "\n"
         )
 
     contexto_sinais = "\n".join("- " + s for s in sinais)
@@ -945,12 +942,16 @@ def consultar_ia(pergunta, sinais, fontes):
         {
             "role": "system",
             "content": (
-                "Você é a IA ALFA, especialista em prevenção de golpes digitais. "
-                "Responda em português brasileiro, com clareza e simplicidade. "
-                "Ajude também com perguntas gerais. Não invente informações. "
-                "Não afirme fraude sem provas. Nunca solicite senhas ou códigos.\n\n"
-                "Sinais encontrados:\n" + contexto_sinais +
-                "\n\nResultados públicos disponíveis:\n" + contexto_fontes
+             "Voce a IA ALFA, uma assistente especializada em prevencao de golpes digitais no Brasil. "
+"Sua prioridade e analisar golpes por Pix, WhatsApp, SMS, e-mail, telefone e links suspeitos e localisar de onde vem pelo gps google. "
+"Responda sempre em portugues brasileiro, de forma clara, educada e objetiva. "
+"Nao mude de assunto e nao invente informacoes. "
+"Nao fale sobre jogos, brincadeiras ou jogo da velha, a menos que o usuario pergunte diretamente. "
+"Quando receber uma mensagem suspeita, explique os riscos e como se proteger. "
+"Nao afirme que existe fraude sem evidencias. "
+"Nunca pensa senhas, codigos de segurancas ou dados bancarios.\n\n"
+"Sinais encontrados:\n" + contexto_sinais +
+"\n\nResultados autenticos disponiveis:\n" + contexto_fontes
             )
         },
         {
@@ -1002,7 +1003,7 @@ def ler_resposta(texto):
 
     if pyttsx3 is None:
 
-        return False, "A biblioteca pyttsx3 não está instalada."
+        return False, "A biblioteca pyttsx3 nao esta instalada."
 
     try:
 
@@ -1024,7 +1025,7 @@ def ler_resposta(texto):
 
 
 # =====================================
-# MEMÓRIA DA PÁGINA
+# MEMORIA DA PAGINA
 # =====================================
 
 if "historico_alfa" not in st.session_state:
@@ -1041,7 +1042,7 @@ if "ultima_fonte" not in st.session_state:
 
 
 # =====================================
-# CABEÇALHO
+#  # CABECALHO
 # =====================================
 
 st.markdown(
@@ -1056,7 +1057,7 @@ st.markdown(
 
     '<div class="alfa-descricao">'
 
-    'ANTIGOLPES • ASSISTENTE DE SEGURANÇA DIGITAL'
+    'ANTIGOLPES A ASSISTENTE DE SEGURANCA DIGITAL'
 
     '</div>',
 
@@ -1066,7 +1067,7 @@ st.markdown(
 
 st.markdown(
 
-    '<div class="alfa-status">● CENTRAL DE ANÁLISE</div>',
+    '<div class="alfa-status">A CENTRAL DE ANALISE</div>',
 
     unsafe_allow_html=True
 
@@ -1076,26 +1077,23 @@ components.html(globo_html, height=335, scrolling=False)
 
 
 # =====================================
-# CONFIGURAÇÕES
+# CONFIGURACOES
 # =====================================
 
-with st.expander("⚙️ Configurações de voz"):
+with st.expander("as Configuracoes de voz"):
 
-    st.write("Use o botão de voz abaixo para ouvir a resposta pelo navegador.")
+    st.write("Use o botao de voz abaixo para ouvir a resposta pelo navegador.")
 
-st.markdown("### 🔎 Analisar mensagem")
+    st.markdown("### 🔎 Analisar mensagem")
 
 st.write(
-
     "Cole abaixo um texto suspeito, mensagem de WhatsApp ou e-mail. "
-
-    "Não inclua senhas nem códigos pessoais."
-
+    "Nao inclua senhas nem codigos pessoais."
 )
 
 
 # =====================================
-# CAMPO DE ANÁLISE
+# CAMPO DE ANALISE
 # =====================================
 
 with st.form("formulario_analise"):
@@ -1116,7 +1114,7 @@ with st.form("formulario_analise"):
 
     )
 
-    enviar = st.form_submit_button("🛡️ ANALISAR AGORA")
+    enviar = st.form_submit_button( "🛡️ ANALISAR AGORA")
 
 
 if enviar:
@@ -1145,13 +1143,13 @@ if enviar:
 
                 resposta = (
 
-                    "Não consegui conectar à IA local.\n\n"
+                    "Nao consegui conectar a IA local.\n\n"
 
-                    "Verifique se o Ollama está aberto e se o modelo "
+                    "Verifique se o Ollama esta aberto e se o modelo "
 
-                    "qwen2.5:0.5b está instalado. Os sinais básicos "
+                    "qwen2.5:0.5b esta instalado. Os sinais basicos "
 
-                    "continuam disponíveis abaixo."
+                    "continuam disponiveis abaixo."
 
                 )
 
@@ -1169,9 +1167,9 @@ if enviar:
 
                 resposta = (
 
-                    "Não foi possível consultar a IA local. "
+                    "Nao foi possivel consultar a IA local. "
 
-                    "Confira se o Ollama está funcionando.\n\n"
+                    "Confira se o Ollama esta funcionando.\n\n"
 
                     "Detalhe: " + str(erro)[:250]
 
@@ -1187,9 +1185,9 @@ if enviar:
 
             + "\n".join("- " + sinal for sinal in sinais)
 
-            + "\n\n**Atenção:** esta análise não comprova fraude. "
+            + "\n\n**Atencao:** esta analise nao comprova fraude. "
 
-              "Confirme informações importantes por um canal oficial."
+              "Confirme informacoes importantes por um canal oficial."
 
         )
 
@@ -1197,7 +1195,7 @@ if enviar:
 
             "\n\n---\n\n"
 
-            "### 🛡️ Proteção de crianças e adolescentes\n\n"
+             "### 🛡️ Protecao de criancas e adolescentes\n\n"
 
             + nivel_protecao
 
@@ -1264,7 +1262,7 @@ if st.session_state.ultima_resposta:
 
                    color:white;font-weight:bold;cursor:pointer;width:100%;">
 
-            🔊 Ouvir resposta da IA ALFA
+            " 🔊 Ouvir resposta da IA ALFA"
 
         </button>
 
@@ -1278,7 +1276,7 @@ if st.session_state.ultima_resposta:
 
             if (!("speechSynthesis" in window)) {{
 
-                alert("A voz não está disponível neste navegador.");
+                alert("A voz nao esta disponivel neste navegador.");
 
                 return;
 
@@ -1286,7 +1284,7 @@ if st.session_state.ultima_resposta:
 
             window.speechSynthesis.cancel();
 
-            const fala = new SpeechSynthesisUtterance(textoAlfa);
+            const fala = new SpeechSynthesisUtterance(textoAlfa.replace(/\*/g, "").replace(/#/g, ""));
 
             fala.lang = "pt-BR";
 
@@ -1306,7 +1304,7 @@ if st.session_state.ultima_resposta:
 
     )
 
-    if st.button("🌐 Ver fontes da última pesquisa"):
+    if st.button( "🌐 Ver fontes da última pesquisa"):
 
         if st.session_state.ultima_fonte:
 
@@ -1328,30 +1326,30 @@ if st.session_state.ultima_resposta:
 
                 "Nenhuma fonte foi encontrada. "
 
-                "Verifique se a biblioteca ddgs está instalada."
+                "Verifique se a biblioteca ddgs estÃ¡ instalada."
 
             )
 
 
 # =====================================
-# HISTÓRICO
+# HISTORICO
 # =====================================
 
 st.markdown("---")
 
-st.markdown("### 📋 Histórico das análises")
+st.markdown("###  📋 Historico das analises")
 
 if st.session_state.historico_alfa:
 
     for item in reversed(st.session_state.historico_alfa):
 
-        with st.expander("Análise: " + item["pergunta"][:65]):
+        with st.expander("analise: " + item["pergunta"][:65]):
 
             st.markdown(item["resposta"])
 
             if item["fontes"]:
 
-                st.markdown("**Fontes públicas:**")
+                st.markdown("**Fontes pÃºblicas:**")
 
                 for fonte in item["fontes"]:
 
@@ -1369,19 +1367,47 @@ if st.session_state.historico_alfa:
 
 else:
 
-    st.info("Suas análises aparecerão aqui.")
+    st.info("Suas analises aparecerrao aqui.")
 
 
 # =====================================
-# RODAPÉ
+# RODAPE
 # =====================================
+
+ 
+# =====================================
+# PAGAMENTOS IA ALFA
+# =====================================
+
+st.markdown("---")
+st.subheader("🔐 Acesso premium IA ALFA")
+st.write("Acesse a IA ALFA por 24 horas.")
+st.markdown("### R$ 10,00")
+
+st.link_button(
+    "💚 PAGAR COM PICPAY",
+    "https://link.picpay.com/p/17945998796af76bc7e329a",
+    use_container_width=True
+)
+
+st.link_button(
+    "💙 PAGAR COM MERCADO PAGO",
+    "https://mpago.la/2gVZnyS",
+    use_container_width=True
+)
+
+
+    
+
 
 st.markdown("---")
 
 st.caption(
 
-    "IA ALFA ANTIGOLPES • Ferramenta de apoio à prevenção. "
+    "IA ALFA ANTIGOLPES e Ferramenta de apoio a prevencao. "
 
-    "Resultados podem estar incompletos; confirme em fontes oficiais."
+    "Resultados podem estar incompletos; confirme e ligue para policia 190."
 
 )
+
+
