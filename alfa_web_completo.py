@@ -15,7 +15,16 @@ import html
 import ipaddress
 
 import json
+from supabase import create_client
 
+# CONEXAO COM SUPABASE
+SUPABASE_URL = st.secrets["supabase"]["url"]
+SUPABASE_KEY = st.secrets["supabase"]["secret_key"]
+
+supabase = create_client(
+    SUPABASE_URL,
+    SUPABASE_KEY
+)
 try:
 
     import pyttsx3
